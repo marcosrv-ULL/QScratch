@@ -12,6 +12,18 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
     <category name="%{BKY_CATEGORY_QUANTUM}" id="quantum" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
             <block type="quantum_whenSuperpositionStart"/>
     
+        
+        <block type="quantum_superposition_no_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="N_CLONES">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+        </block>
         <block type="quantum_superpositions">
             <value name="VARIABLE">
                 <shadow type="motion_glideto_menu">
@@ -28,9 +40,17 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
-        <block type="quantum_superposition_no_list">
+        ${blockSeparator}
+        <block type="quantum_whenEntanglementStart"/>
+        
+        <block type="quantum_entanglement_no_list">
             <value name="VARIABLE">
                 <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="TARGET">
+                <shadow type="text">
+                    <field name="TEXT">Nombre</field>
                 </shadow>
             </value>
             <value name="N_CLONES">
@@ -39,8 +59,6 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
-        ${blockSeparator}
-        <block type="quantum_whenEntanglementStart"/>
         <block type="quantum_entanglement">
             <value name="VARIABLE">
                 <shadow type="motion_glideto_menu">
@@ -59,22 +77,6 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             <value name="LISTA2">
                 <shadow type="math_number">
                     <field name="NUM">rango2</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="quantum_entanglement_no_list">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
-            <value name="TARGET">
-                <shadow type="text">
-                    <field name="TEXT">Nombre</field>
-                </shadow>
-            </value>
-            <value name="N_CLONES">
-                <shadow type="math_number">
-                    <field name="NUM">1</field>
                 </shadow>
             </value>
         </block>

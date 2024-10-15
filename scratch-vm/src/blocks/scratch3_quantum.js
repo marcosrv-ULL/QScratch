@@ -45,12 +45,17 @@ class QuantumBlocks {
     entanglement(args, util) {
         const child = this.runtime.getSpriteTargetByName(args.TARGET);
         if (!child) return;
+        const variable = args.VARIABLES;
+        const list1 = args.LISTA1;
+        const list2 = args.LISTA2;
+        this.util.target.addEntangleLink(child, variable);
     }
 
     entanglementNClones(args, util) {
         const child = this.runtime.getSpriteTargetByName(args.TARGET);
-        console.log(child);
         if (!child) return;
+        const variable = args.VARIABLES;
+        const nClones = args.N_CLONES;
     }
 
     superposition(args, util) {

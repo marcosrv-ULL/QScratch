@@ -82,8 +82,25 @@ class Target extends EventEmitter {
             '_direction_': false,
             '_color_': false
         };
+
+        this._entanglementLinks = {
+            '_position_': [],
+            '_direction_': [],
+            '_color_': []
+        }
     }
 
+
+    isEntangle() {
+        return Object.values(this._entanglementLinks).some(value => value.length > 0);
+    }
+
+    addEntangleLink(target, variable) {
+        if (!this._entanglementLinks[variable].includes(target)) {
+            this._entanglementLinks[variable].push(target);
+            target._entanglementLinks[variable].push(this);
+        }
+    }
 
     isInSuperPosition() {
         return Object.values(this._isInSuperpositionVariable).some(value => value === true);
