@@ -39,36 +39,37 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+        ${blockSeparator}
         <block type="quantum_whenEntanglementStart"/>
         <block type="quantum_entanglement">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
             <value name="TARGET">
                 <shadow type="math_number">
                     <field name="NUM">Nombre</field>
                 </shadow>
             </value>
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
+            <value name="LISTA1">
+                <shadow type="math_number">
+                    <field name="NUM">rango1</field>
                 </shadow>
             </value>
-            <value name="N_CLONES">
+            <value name="LISTA2">
                 <shadow type="math_number">
-                    <field name="NUM">1</field>
-                </shadow>
-            </value>
-            <value name="LISTA">
-                <shadow type="math_number">
-                    <field name="NUM">lista</field>
+                    <field name="NUM">rango2</field>
                 </shadow>
             </value>
         </block>
         <block type="quantum_entanglement_no_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
             <value name="TARGET">
                 <shadow type="math_number">
                     <field name="NUM">Nombre</field>
-                </shadow>
-            </value>
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
                 </shadow>
             </value>
             <value name="N_CLONES">
@@ -77,6 +78,8 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+        ${blockSeparator}
+        <block type="quantum_whenMeasured"/>
         <block type="quantum_measure">
             
         </block>

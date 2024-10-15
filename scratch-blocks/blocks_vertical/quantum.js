@@ -57,7 +57,6 @@ Blockly.Blocks['quantum_superposition'] = {
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION, '_position_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION, '_direction_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR, '_color_'],
-              [Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME, '_costume_']
             ]
           },
           {
@@ -91,7 +90,6 @@ Blockly.Blocks['quantum_superposition'] = {
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION, '_position_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION, '_direction_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR, '_color_'],
-              [Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME, '_costume_']
             ]
           },
           {
@@ -114,18 +112,17 @@ Blockly.Blocks['quantum_superposition'] = {
         "message0": Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST, // while confirmed %1
         "args0": [
           {
-            "type": "input_value",
-            "name": "TARGET"
-          },
-          {
             "type": "field_dropdown",
             "name": "VARIABLES",
             "options": [
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION, '_position_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION, '_direction_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR, '_color_'],
-              [Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME, '_costume_']
             ]
+          },
+          {
+            "type": "input_value",
+            "name": "TARGET"
           },
           {
             "type": "input_value",
@@ -147,26 +144,26 @@ Blockly.Blocks['quantum_superposition'] = {
         "message0": Blockly.Msg.QUANTUM_ENTANGLEMENT, // while confirmed %1
         "args0": [
           {
-            "type": "input_value",
-            "name": "TARGET"
-          },
-          {
             "type": "field_dropdown",
             "name": "VARIABLES",
             "options": [
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION, '_position_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION, '_direction_'],
               [Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR, '_color_'],
-              [Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME, '_costume_']
             ]
           },
           {
             "type": "input_value",
-            "name": "N_CLONES"
+            "name": "TARGET"
           },
           {
             "type": "input_value",
-            "name": "LISTA",
+            "name": "LISTA1",
+            "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          },
+          {
+            "type": "input_value",
+            "name": "LISTA2",
             "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
           }
         ],
@@ -210,6 +207,19 @@ Blockly.Blocks['quantum_superposition'] = {
     init: function(){
       this.jsonInit({
         "message0": Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART,
+        "category": Blockly.Categories.event,
+        "extensions": ["colours_quantum", "shape_hat"]
+      });
+    }
+  };
+
+  Blockly.Blocks['quantum_whenMeasured'] = {
+    /**
+     * @this Blockly.Block
+     */
+    init: function(){
+      this.jsonInit({
+        "message0": Blockly.Msg.QUANTUM_WHENMEASURED,
         "category": Blockly.Categories.event,
         "extensions": ["colours_quantum", "shape_hat"]
       });

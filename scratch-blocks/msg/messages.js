@@ -42,13 +42,14 @@ Blockly.Msg.DIALOGS_RANDOMCHOICE = 'random Choice';
 
 // Quantum Blocks
 Blockly.Msg.QUANTUM_MEASURE = 'medir';
+Blockly.Msg.QUANTUM_WHENMEASURED = 'cuando se mida'
 Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART = 'cuando empiece superposición'
 Blockly.Msg.QUANTUM_WHENENTANGLEMENTSTART = 'cuando empiece entrelazamiento'
 Blockly.Msg.QUANTUM_SUPERPOSITION = 'superposition variable %1 nº clones %2 lista %3';
 Blockly.Msg.QUANTUM_SUPERPOSITION1 = 'superponer la %1 posibilidades: %2 rango: %3';
 Blockly.Msg.QUANTUM_SUPERPOSITION_NO_LIST = 'superponer la %1 posibilidades: %2 ';
-Blockly.Msg.QUANTUM_ENTANGLEMENT = 'entrelazar a %1 la %2 posibilidades: %3 rango: %4';
-Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST = 'entrelazar a %1 la %2 posibilidades: %3';
+Blockly.Msg.QUANTUM_ENTANGLEMENT = 'entrelazar %1 de %2 según %3 y %4';
+Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST = 'entrelazar %1 de %2 en %3 posibilidades';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION = 'posición';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION = 'dirección';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR = 'color';
