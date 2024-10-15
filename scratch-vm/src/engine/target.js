@@ -104,66 +104,7 @@ class Target extends EventEmitter {
             this._clones.push(clone);
         }
 
-        switch (variable) {
-            case "_position_":
-
-                // Número máximo de clones
-                const MAX_CLONES = 300;
-
-                // Número de clones a usar, capando el máximo
-                let numClones = Math.min(nClones, MAX_CLONES);
-
-                // Define el radio, podría ser una función del número de clones (aquí es lineal, pero puedes modificar la fórmula)
-                let radius = numClones * 10;  // Radio aumenta 10 unidades por cada clon
-                radius = Math.min(radius, 1500);  // Capamos el radio máximo a 1500 (arbitrario, ajusta según necesites)
-
-                // Generamos una posición aleatoria dentro del radio
-                let angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
-                let distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
-
-                // Convertimos de coordenadas polares a cartesianas
-                let posx = this.x + distance * Math.cos(angle);
-                let posy = this.y + distance * Math.sin(angle);
-
-                // Establece las nuevas coordenadas
-                this.setXY(posx, posy);
-
-
-                for (const clone of this._clones) {
-                    // Posición aleatoria para cada clon dentro del mismo radio
-                    angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
-                    distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
-
-                    posx = this.x + distance * Math.cos(angle);
-                    posy = this.y + distance * Math.sin(angle);
-
-                    clone.setXY(posx, posy);
-                }
-                break;
-            case "_direction_":
-                // Generar una dirección aleatoria entre 0 y 360 grados
-                let randomDirection = Math.random() * 360;
-                this.setDirection(randomDirection);
-
-                for (const clone of this._clones) {
-                    // Posición aleatoria para cada clon dentro del mismo radio
-                    randomDirection = Math.random() * 360;
-                    clone.setDirection(randomDirection);
-                }
-                break;
-            case "_color_":
-                let randomColor = Math.random() * 200;
-                this.setEffect("color", randomColor);
-                for (const clone of this._clones) {
-                    // Posición aleatoria para cada clon dentro del mismo radio
-                    randomColor = Math.random() * 200;
-                    clone.setEffect("color", randomColor);
-                }
-                break;
-            case "_costume_":
-                console.log("_costume_");
-                break;
-        }
+        this.changeVariable(variable, nClones, this);
 
         let scripts = BlocksRuntimeCache.getScripts(this.blocks, 'quantum_whenSuperpositionStart');
         if (scripts.length >= 1) {
@@ -176,10 +117,71 @@ class Target extends EventEmitter {
         }
     }
 
+    changeVariable(variable, nClones, target, onlyTarget) {
+        switch (variable) {
+            case "_position_":
+
+                const MAX_CLONES = 300;
+
+                let numClones = Math.min(nClones, MAX_CLONES);
+
+                let radius = numClones * 10; 
+                radius = Math.min(radius, 1500); 
+
+                let angle = Math.random() * 2 * Math.PI; 
+                let distance = Math.random() * radius;  
+
+                let posx = target.x + distance * Math.cos(angle);
+                let posy = target.y + distance * Math.sin(angle);
+
+                target.setXY(posx, posy);
+
+                if (!onlyTarget) {
+                    for (const clone of target._clones) {
+                        // Posición aleatoria para cada clon dentro del mismo radio
+                        angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
+                        distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
+
+                        posx = target.x + distance * Math.cos(angle);
+                        posy = target.y + distance * Math.sin(angle);
+
+                        clone.setXY(posx, posy);
+                    }
+                }
+
+                break;
+            case "_direction_":
+                let randomDirection = Math.random() * 360;
+                target.setDirection(randomDirection);
+
+                if (!onlyTarget) {
+                    for (const clone of target._clones) {
+                        randomDirection = Math.random() * 360;
+                        clone.setDirection(randomDirection);
+                    }
+                }
+                break;
+            case "_color_":
+                let randomColor = Math.random() * 200;
+                target.setEffect("color", randomColor);
+                if (!onlyTarget) {
+                    for (const clone of target._clones) {
+                        randomColor = Math.random() * 200;
+                        clone.setEffect("color", randomColor);
+                    }
+                }
+                break;
+            case "_costume_":
+                console.log("_costume_");
+                break;
+        }
+    }
+
     superpose(nClones, variable) {
         if (!this._isInSuperpositionVariable[variable]) {
             this._isInSuperpositionVariable[variable] = true;
-            if(!this.hasNoClone) {
+            this.changeVariable(variable, nClones, this, true);
+            if (!this.hasNoClone) {
                 console.log(variable + " 1");
                 console.log(this._clones);
                 for (const clone of this._clones) {
@@ -190,9 +192,9 @@ class Target extends EventEmitter {
                 this.createPossibilities(nClones, variable)
             }
         }
-        
-        
-        
+
+
+
         /*
         if (this._isInSuperpositionVariable[variable]) {
             console.log(variable + " 1");
@@ -268,7 +270,7 @@ class Target extends EventEmitter {
             }
         }
         console.log(this.runtime.targets);
-        
+
 
         /*
         if (this.hasNoClone && !this.isOriginal) {
