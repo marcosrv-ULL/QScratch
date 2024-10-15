@@ -18,12 +18,6 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build project
-      run: npm run build  # Asumiendo que tienes un script 'build'
-
     - name: Deploy to GitHub Pages
       run: |
         mv scratch-gui/.build/ docs/
