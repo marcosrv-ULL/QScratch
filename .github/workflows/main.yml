@@ -1,4 +1,4 @@
-name: Build and Deploy to GitHub Pages
+name: Build and Deploy qScratch
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Deploy to GitHub Pages
+    - name: qScratch
       run: |
         mv scratch-gui/build/ docs/
         git config --global user.email "mrodrive@ull.edu.es"
