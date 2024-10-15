@@ -89,7 +89,7 @@ class Target extends EventEmitter {
         return Object.values(this._isInSuperpositionVariable).some(value => value === true);
     }
 
-    createPossibilities(nClones, variable) {
+    createPossibilities(nClones, variable, hasList, list) {
         this._isInSuperpositionVariable[variable] = true;
         this.hasNoClone = false;
         for (let i = 0; i < nClones - 1; i++) {
@@ -104,7 +104,11 @@ class Target extends EventEmitter {
             this._clones.push(clone);
         }
 
-        this.changeVariable(variable, nClones, this);
+        if (!hasList) {
+            this.changeVariable(variable, nClones, this);
+        } else {
+            this.changeVariableWithList(variable, this, list)
+        }
 
         let scripts = BlocksRuntimeCache.getScripts(this.blocks, 'quantum_whenSuperpositionStart');
         if (scripts.length >= 1) {
@@ -177,6 +181,45 @@ class Target extends EventEmitter {
         }
     }
 
+    changeVariableWithList(variable, target, list, onlyTarget) {
+        let rangeList = list;
+
+        switch (variable) {
+            case "_position_":
+                console.log("_position_");
+                this.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                if (!onlyTarget) {
+                    for (const clone of this._clones) {
+                        clone.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                    
+                }
+            }
+                break;
+            case "_direction_":
+                console.log("_direction_");
+                this.setDirection(this.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                if (!onlyTarget) {
+                    for (const clone of this._clones) {
+                        clone.setDirection(clone.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                    
+                }
+            }
+                break;
+            case "_color_":
+                console.log("_color_");
+                this.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                if (!onlyTarget) {
+                    for (const clone of this._clones) {
+                        clone.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                }
+            }
+                break;
+            case "_costume_":
+                console.log("_costume_");
+                break;
+        }
+    }
+
     superpose(nClones, variable) {
         if (!this._isInSuperpositionVariable[variable]) {
             this._isInSuperpositionVariable[variable] = true;
@@ -189,26 +232,20 @@ class Target extends EventEmitter {
                 this.createPossibilities(nClones, variable)
             }
         }
+    }
 
-
-
-        /*
-        if (this._isInSuperpositionVariable[variable]) {
-            console.log(variable + " 1");
-            return;
-        } else if (!this._isInSuperpositionVariable[variable] && this.isInSuperPosition()) {
+    superposeWithList(nClones, variable, list) {
+        if (!this._isInSuperpositionVariable[variable]) {
             this._isInSuperpositionVariable[variable] = true;
-            console.log(variable + " 2");
-            console.log(this._clones);
-            for (const clone of this._clones) {
-                clone.superpose(nClones, variable);
+            this.changeVariableWithList(variable, this, list, true);
+            if (!this.hasNoClone) {
+                for (const clone of this._clones) {
+                    clone.superposeWithList(nClones, variable, list);
+                }
+            } else {
+                this.createPossibilities(nClones, variable, true, list)
             }
-        } else {
-            this.createPossibilities(nClones, variable);
-        }*/
-
-
-
+        }
     }
 
     pushThread(blockId, target, canStep) {

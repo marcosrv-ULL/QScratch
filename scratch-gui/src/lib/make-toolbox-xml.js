@@ -10,6 +10,8 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
     <category name="%{BKY_CATEGORY_QUANTUM}" id="quantum" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+            <block type="quantum_whenSuperpositionStart"/>
+    
         <block type="quantum_superpositions">
             <value name="VARIABLE">
                 <shadow type="motion_glideto_menu">
@@ -37,6 +39,7 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+        <block type="quantum_whenEntanglementStart"/>
         <block type="quantum_entanglement">
             <value name="TARGET">
                 <shadow type="math_number">
@@ -77,8 +80,6 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
         <block type="quantum_measure">
             
         </block>
-        <block type="quantum_whenSuperpositionStart"/>
-        <block type="quantum_whenEntanglementStart"/>
         ${categorySeparator}
     </category>
     `;

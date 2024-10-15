@@ -226,93 +226,22 @@ class QuantumBlocks {
 
 
     superpositions(args, util) {
-        if (!util.target.isInSuperposition) {
-            if (args.N_CLONES >= 300) {
-                args.N_CLONES = 299;
-            } else {
-                args.N_CLONES = parseInt(args.N_CLONES, 10);
-            }
-            let cloneTarget = util.target;
-            cloneTarget.isOriginal = true;
-            cloneTarget.isInSuperposition = true;
-            util.target.name = "Original";
-            for (let i = 0; i < args.N_CLONES - 1; i++) {
-                let clone = cloneTarget.makeClone();
-                clone.isClone = true;
-                clone.targetId = util.target.id;
-                clone.name = "clone" + i;
-                clone.isInSuperposition = true;
-                this.runtime.addTarget(clone);
-                clone.goBehindOther(cloneTarget);
-            }
-
-            util.target.isInSuperposition = true;
-            if (!this.runtime.effectGhost) {
-                this.runtime.effectGhost = setInterval(() => {
-                    for (let i = 0; i < this.runtime.targets.length; i++) {
-                        if (this.runtime.targets[i].isInSuperposition) {
-                            this.runtime.targets[i].setEffect("ghost", this.clampReflection(increment));
-                        }
-                    }
-                    increment += 10;
-                }, 100);
-            }
-
-
+        util.target.isOriginal = true;
+        if (!util.target._isInSuperpositionVariable[args.VARIABLES]) {
+            util.target.superposeWithList(parseInt(args.N_CLONES, 10), args.VARIABLES, this.convertToList(args.LISTA));
         }
-
-        let rangeList = this.convertToList(args.LISTA);
-        let increment = 1;
-        let targets = [util.target];
-
-        switch (args.VARIABLES) {
-            case "_position_":
-                console.log("_position_");
-                util.target.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
+        let increment = 0;
+        
+        if (!this.runtime.effectGhost) {
+            this.runtime.effectGhost = setInterval(() => {
                 for (let i = 0; i < this.runtime.targets.length; i++) {
-                    if (this.runtime.targets[i].isClone && this.runtime.targets[i].targetId == util.target.id) {
-                        this.runtime.targets[i].setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                        targets.push(this.runtime.targets[i]);
+                    if (this.runtime.targets[i].isInSuperPosition()) {
+                        this.runtime.targets[i].setEffect("ghost", this.clampReflection(increment + (i * 8.5)));
                     }
                 }
-                break;
-            case "_direction_":
-                console.log("_direction_");
-                util.target.setDirection(util.target.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                for (let i = 0; i < this.runtime.targets.length; i++) {
-                    if (this.runtime.targets[i].isClone && this.runtime.targets[i].targetId == util.target.id) {
-                        this.runtime.targets[i].setDirection(this.runtime.targets[i].direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                        targets.push(this.runtime.targets[i]);
-                    }
-                }
-                break;
-            case "_color_":
-                console.log("_color_");
-                util.target.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                for (let i = 0; i < this.runtime.targets.length; i++) {
-                    if (this.runtime.targets[i].isClone && this.runtime.targets[i].targetId == util.target.id) {
-                        this.runtime.targets[i].setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                        targets.push(this.runtime.targets[i]);
-                    }
-                }
-                break;
-            case "_costume_":
-                console.log("_costume_");
-                break;
-        }
-
-        if (util.target.isInSuperposition) {
-            let scripts = BlocksRuntimeCache.getScripts(util.target.blocks, 'quantum_whenSuperpositionStart');
-            if (scripts.length >= 1) {
-                for (let j = 0; j < scripts.length; j++) {
-                    this.pushThread(scripts[j].blockId, util.target, false);
-                    for (let i = 0; i < this.runtime.targets.length; i++) {
-                        if (this.runtime.targets[i].isClone && this.runtime.targets[i].targetId == util.target.id) {
-                            this.pushThread(scripts[j].blockId, this.runtime.targets[i], true);
-                        }
-                    }
-                }
-            }
+                increment += 10;
+                if (increment > 10000000) increment = 0;
+            }, 100);
         }
 
 

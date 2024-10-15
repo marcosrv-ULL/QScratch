@@ -55,7 +55,6 @@ const CORE_EXTENSIONS = [
     'procedures',
     'sensing',
     'sound',
-    'dialogs',
     'quantum'
 ];
 
