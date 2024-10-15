@@ -1,0 +1,28 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Cambia esto si trabajas en otra rama
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Deploy to GitHub Pages
+      run: |
+        mv scratch-gui/.build/ docs/
+        git config --global user.email "mrodrive@ull.edu.es"
+        git config --global user.name "Marcos RV"
+        git add .
+        git commit -m "Deploy to GitHub Pages"
+        git push origin main
