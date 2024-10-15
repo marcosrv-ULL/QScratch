@@ -182,13 +182,10 @@ class Target extends EventEmitter {
             this._isInSuperpositionVariable[variable] = true;
             this.changeVariable(variable, nClones, this, true);
             if (!this.hasNoClone) {
-                console.log(variable + " 1");
-                console.log(this._clones);
                 for (const clone of this._clones) {
                     clone.superpose(nClones, variable);
                 }
             } else {
-                console.log(variable + " 2");
                 this.createPossibilities(nClones, variable)
             }
         }
@@ -250,7 +247,6 @@ class Target extends EventEmitter {
     measure() {
         console.log(this.runtime.targets);
         for (let i = this.runtime.targets.length - 1; i > 0; i--) {
-            console.log(i);
             if (this.runtime.targets[i].originalId === this.originalId && this.runtime.targets[i].isClone) {
                 this.runtime.targets[i].hasNoClone = true;
                 //this.runtime.targets[i]._clones = [];
@@ -269,9 +265,6 @@ class Target extends EventEmitter {
                 this._clones = [];
             }
         }
-        console.log(this.runtime.targets);
-
-
         /*
         if (this.hasNoClone && !this.isOriginal) {
             this.hasNoClone = true;

@@ -6,46 +6,6 @@ const categorySeparator = '<sep gap="36"/>';
 const blockSeparator = '<sep gap="36"/>'; // At default scale, about 28px
 
 /* eslint-disable no-unused-vars */
-const dialogs = function (isInitialSetup, isStage, targetId, colors) {
-    const hello = ScratchBlocks.ScratchMsgs.translate('LOOKS_HELLO', 'Hello!');
-    // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
-    return `
-    <category name="%{BKY_CATEGORY_DIALOGS}" id="dialogs" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
-        <block type="dialogs_alert">
-            <value name="MESSAGE">
-                <shadow type="text">
-                    <field name="TEXT">${hello}</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="dialogs_prompt">
-            <value name="MESSAGE">
-                <shadow type="text">
-                    <field name="TEXT">${hello}</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="dialogs_confirm">
-            <value name="MESSAGE">
-                <shadow type="text">
-                    <field name="TEXT">${hello}</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="dialogs_whileconfirmed">
-            <value name="MESSAGE">
-                <shadow type="text">
-                    <field name="TEXT">${hello}</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="dialogs_randomchoice" />
-        ${categorySeparator}
-    </category>
-    `;
-};
-
-/* eslint-disable no-unused-vars */
 const quantum = function (isInitialSetup, isStage, targetId, colors) {
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
@@ -916,7 +876,6 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
         }
         // return `undefined`
     };
-    const dialogsXML = moveCategory('dialogs') || dialogs(isInitialSetup, isStage, targetId, colors.dialogs);
     const quantumXML = moveCategory('quantum') || quantum(isInitialSetup, isStage, targetId, colors.quantum);
     const motionXML = moveCategory('motion') || motion(isInitialSetup, isStage, targetId, colors.motion);
     const looksXML = moveCategory('looks') ||
@@ -931,7 +890,6 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
 
     const everything = [
         xmlOpen,
-        dialogsXML, gap,
         quantumXML, gap,
         motionXML, gap,
         looksXML, gap,

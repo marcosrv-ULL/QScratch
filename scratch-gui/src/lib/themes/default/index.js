@@ -1,10 +1,4 @@
 const blockColors = {
-    dialogs: {
-        primary: "#60a05c",
-        secondary: "#4c8249",
-        tertiary: "#31542f",
-        quaternary: "#31542f"
-    },
     quantum: {
         primary: "#041c9b",   
         secondary: "#7b61ff",  

@@ -31,12 +31,6 @@ Blockly.Colours = {
     "tertiary": "#1c1f26",   
     "quaternary": "#e6e6e6" 
   },
-  "dialogs": {
-    "primary": "#60a05c",
-    "secondary": "#4c8249",
-    "tertiary": "#31542f",
-    "quaternary": "#31542f"
-  },
   "motion": {
     "primary": "#4C97FF",
     "secondary": "#4280D7",
