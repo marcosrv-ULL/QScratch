@@ -129,11 +129,11 @@ class Target extends EventEmitter {
 
                 let numClones = Math.min(nClones, MAX_CLONES);
 
-                let radius = numClones * 10; 
-                radius = Math.min(radius, 1500); 
+                let radius = numClones * 10;
+                radius = Math.min(radius, 1500);
 
-                let angle = Math.random() * 2 * Math.PI; 
-                let distance = Math.random() * radius;  
+                let angle = Math.random() * 2 * Math.PI;
+                let distance = Math.random() * radius;
 
                 let posx = target.x + distance * Math.cos(angle);
                 let posy = target.y + distance * Math.sin(angle);
@@ -191,9 +191,9 @@ class Target extends EventEmitter {
                 if (!onlyTarget) {
                     for (const clone of this._clones) {
                         clone.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                    
+
+                    }
                 }
-            }
                 break;
             case "_direction_":
                 console.log("_direction_");
@@ -201,9 +201,9 @@ class Target extends EventEmitter {
                 if (!onlyTarget) {
                     for (const clone of this._clones) {
                         clone.setDirection(clone.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                    
+
+                    }
                 }
-            }
                 break;
             case "_color_":
                 console.log("_color_");
@@ -211,8 +211,8 @@ class Target extends EventEmitter {
                 if (!onlyTarget) {
                     for (const clone of this._clones) {
                         clone.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
+                    }
                 }
-            }
                 break;
             case "_costume_":
                 console.log("_costume_");
@@ -226,7 +226,7 @@ class Target extends EventEmitter {
             this.changeVariable(variable, nClones, this, true);
             if (!this.hasNoClone) {
                 for (const clone of this._clones) {
-                    clone.superpose(nClones, variable);
+                    clone.superpose(nClones + 1, variable);
                 }
             } else {
                 this.createPossibilities(nClones, variable)
@@ -240,7 +240,7 @@ class Target extends EventEmitter {
             this.changeVariableWithList(variable, this, list, true);
             if (!this.hasNoClone) {
                 for (const clone of this._clones) {
-                    clone.superposeWithList(nClones, variable, list);
+                    clone.superposeWithList(nClones + 1, variable, list);
                 }
             } else {
                 this.createPossibilities(nClones, variable, true, list)
