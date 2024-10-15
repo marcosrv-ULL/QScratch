@@ -20,7 +20,7 @@ jobs:
 
     - name: Deploy to GitHub Pages
       run: |
-        mv scratch-gui/.build/ docs/
+        mv scratch-gui/build/ docs/
         git config --global user.email "mrodrive@ull.edu.es"
         git config --global user.name "Marcos RV"
         git add .
