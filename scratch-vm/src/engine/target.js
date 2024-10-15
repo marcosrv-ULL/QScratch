@@ -176,7 +176,6 @@ class Target extends EventEmitter {
                 }
                 break;
             case "_costume_":
-                console.log("_costume_");
                 break;
         }
     }
@@ -186,17 +185,14 @@ class Target extends EventEmitter {
 
         switch (variable) {
             case "_position_":
-                console.log("_position_");
                 this.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
                 if (!onlyTarget) {
                     for (const clone of this._clones) {
                         clone.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
-
                     }
                 }
                 break;
             case "_direction_":
-                console.log("_direction_");
                 this.setDirection(this.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
                 if (!onlyTarget) {
                     for (const clone of this._clones) {
@@ -206,7 +202,6 @@ class Target extends EventEmitter {
                 }
                 break;
             case "_color_":
-                console.log("_color_");
                 this.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
                 if (!onlyTarget) {
                     for (const clone of this._clones) {
@@ -215,7 +210,6 @@ class Target extends EventEmitter {
                 }
                 break;
             case "_costume_":
-                console.log("_costume_");
                 break;
         }
     }
@@ -282,45 +276,34 @@ class Target extends EventEmitter {
     }
 
     measure() {
-        console.log(this.runtime.targets);
-        for (let i = this.runtime.targets.length - 1; i > 0; i--) {
-            if (this.runtime.targets[i].originalId === this.originalId && this.runtime.targets[i].isClone) {
-                this.runtime.targets[i].hasNoClone = true;
-                //this.runtime.targets[i]._clones = [];
-                //Object.keys(this.runtime.targets[i]._isInSuperpositionVariable).forEach(key => {
-                //    this.runtime.targets[i]._isInSuperpositionVariable[key] = false;
-                //});
-                this.runtime.stopForTarget(this.runtime.targets[i])
-                this.runtime.disposeTarget(this.runtime.targets[i]);
-            } else if (this.runtime.targets[i].originalId === this.originalId) {
-                Object.keys(this._isInSuperpositionVariable).forEach(key => {
-                    this._isInSuperpositionVariable[key] = false;
-                });
-                this.setEffect("ghost", 0);
-                this.runtime.stopForTarget(this);
-                this.hasNoClone = true;
-                this._clones = [];
+        if (this.isInSuperPosition()) {
+            for (let i = this.runtime.targets.length - 1; i > 0; i--) {
+                if (this.runtime.targets[i].originalId === this.originalId && this.runtime.targets[i].isClone) {
+                    this.runtime.targets[i].hasNoClone = true;
+                    //this.runtime.targets[i]._clones = [];
+                    //Object.keys(this.runtime.targets[i]._isInSuperpositionVariable).forEach(key => {
+                    //    this.runtime.targets[i]._isInSuperpositionVariable[key] = false;
+                    //});
+                    this.runtime.stopForTarget(this.runtime.targets[i])
+                    this.runtime.disposeTarget(this.runtime.targets[i]);
+                } else if (this.runtime.targets[i].originalId === this.originalId) {
+                    Object.keys(this._isInSuperpositionVariable).forEach(key => {
+                        this._isInSuperpositionVariable[key] = false;
+                    });
+                    this.setEffect("ghost", 0);
+                    this.runtime.stopForTarget(this);
+                    this.hasNoClone = true;
+                    this._clones = [];
+                }
             }
         }
-        /*
-        if (this.hasNoClone && !this.isOriginal) {
-            this.hasNoClone = true;
-
-            this.runtime.disposeTarget(this);
-        } else {
-            Object.keys(this._isInSuperpositionVariable).forEach(key => {
-                this._isInSuperpositionVariable[key] = false;
-            });
-            for (const clone of this._clones) {
-                clone.measure();
+        
+        let scripts = BlocksRuntimeCache.getScripts(this.blocks, 'quantum_whenMeasured');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                this.pushThread(scripts[j].blockId, this, true);
             }
-            if (this.isOriginal) {
-                this.setEffect("ghost", 0);
-                this.runtime.stopForTarget(this);
-                this.hasNoClone = true;
-            }
-            this._clones = [];
-        }*/
+        }
 
     }
 

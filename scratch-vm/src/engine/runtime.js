@@ -1828,10 +1828,6 @@ class Runtime extends EventEmitter {
      */
     startHats(requestedHatOpcode,
         optMatchFields, optTarget) {
-        if (requestedHatOpcode === 'quantum_whenSuperpositionStart') {
-            console.log("----------------");
-
-        }
         if (!Object.prototype.hasOwnProperty.call(this._hats, requestedHatOpcode)) {
             // No known hat with this opcode.
             return;
@@ -1894,28 +1890,17 @@ class Runtime extends EventEmitter {
                     }
                 }
             } 
-            console.log(topBlockId + " all ")
             newThreads.push(this._pushThread(topBlockId, target));
             // Start the thread with this top block.
         }, optTarget);
-        if (requestedHatOpcode === 'quantum_whenSuperpositionStart') {
-            console.log(requestedHatOpcode);
-            console.log(optMatchFields);
-            console.log(optTarget);
-            console.log(hatMeta);
-            console.log(newThreads);
 
-        }
         // For compatibility with Scratch 2, edge triggered hats need to be processed before
         // threads are stepped. See ScratchRuntime.as for original implementation
         newThreads.forEach(thread => {
             execute(this.sequencer, thread, requestedHatOpcode);
             thread.goToNextBlock();
         });
-        if (requestedHatOpcode === 'quantum_whenSuperpositionStart') {
-            console.log("----------------");
 
-        }
         return newThreads;
     }
 
