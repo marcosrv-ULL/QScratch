@@ -47,8 +47,8 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
             <value name="TARGET">
-                <shadow type="math_number">
-                    <field name="NUM">Nombre</field>
+                <shadow type="text">
+                    <field name="TEXT">Nombre</field>
                 </shadow>
             </value>
             <value name="LISTA1">
@@ -68,8 +68,8 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
             <value name="TARGET">
-                <shadow type="math_number">
-                    <field name="NUM">Nombre</field>
+                <shadow type="text">
+                    <field name="TEXT">Nombre</field>
                 </shadow>
             </value>
             <value name="N_CLONES">

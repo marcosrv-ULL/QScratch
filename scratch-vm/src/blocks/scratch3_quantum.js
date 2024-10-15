@@ -20,6 +20,8 @@ class QuantumBlocks {
      */
     getPrimitives() {
         return {
+            quantum_entanglement: this.entanglement,
+            quantum_entanglement_no_list: this.entanglementNClones,
             quantum_superposition_no_list: this.superposition,
             quantum_superpositions: this.superpositions,
             quantum_measure: this.measure,
@@ -40,8 +42,15 @@ class QuantumBlocks {
         return (util.target.isInSuperposition != true) ? false : true;
     }
 
-    changeCostumeEffect() {
+    entanglement(args, util) {
+        const child = this.runtime.getSpriteTargetByName(args.TARGET);
+        if (!child) return;
+    }
 
+    entanglementNClones(args, util) {
+        const child = this.runtime.getSpriteTargetByName(args.TARGET);
+        console.log(child);
+        if (!child) return;
     }
 
     superposition(args, util) {
