@@ -20,6 +20,8 @@ const BlocksRuntimeCache = require('./blocks-runtime-cache');
 class Target extends EventEmitter {
 
     static possibilityTree = {};
+    static isInSuperPositionList = {};
+    static entanglementLinks = {};
 
     /**
      * @param {Runtime} runtime Reference to the runtime.
@@ -80,13 +82,13 @@ class Target extends EventEmitter {
         this.originalId = this.id;
 
         
-        this._isInSuperpositionVariable = {
+        Target.isInSuperPositionList[this.id] = {
             '_position_': false,
             '_direction_': false,
             '_color_': false
         };
 
-        this._entanglementLinks = {
+        Target.entanglementLinks[this.id] = {
             '_position_': [],
             '_direction_': [],
             '_color_': []
@@ -106,42 +108,101 @@ class Target extends EventEmitter {
     }
 
     isInSuperPosition() {
-        return Object.values(this._isInSuperpositionVariable).some(value => value === true);
+        return Object.values(Target.isInSuperPositionList[this.originalId]).some(value => value === true);
     }
 
-    createPossibilities(nClones, variable, hasList, list) {
-        this._isInSuperpositionVariable[variable] = true;
-        this.hasNoClone = false;
-        for (let i = 0; i < nClones - 1; i++) {
-            let clone = this.makeClone();
-            clone.isClone = true;
-            clone.hasNoClone = true;
-            clone.originalId = this.originalId;
-            clone._isInSuperpositionVariable = Object.assign({}, this._isInSuperpositionVariable);
+    isSuperpose(variable) {
+        return Target.isInSuperPositionList[this.originalId][variable]; 
+    }
 
-            this.runtime.addTarget(clone);
-            clone.goBehindOther(this);
-            this._clones.push(clone);
+    changeSuperposeState(variable) {
+        Target.isInSuperPositionList[this.originalId][variable] = true;
+    }
+
+    chooseOriginalFromTree(tree) {
+        let originalIndex = (Math.floor(Math.random() * tree.length));
+        for (let i = 0; i < tree.length; i++) {
+            if (tree[i].isOriginal) {
+                tree[i].isOriginal = false;
+                tree[i].clone = true;
+            }
         }
+        tree[originalIndex].isOriginal = true;
+        tree[originalIndex].clone = false;
+        return tree[originalIndex]
+    }
 
-        if (!hasList) {
-            this.changeVariable(variable, nClones, this);
-        } else {
-            this.changeVariableWithList(variable, this, list)
-        }
-
-        let scripts = BlocksRuntimeCache.getScripts(this.blocks, 'quantum_whenSuperpositionStart');
-        if (scripts.length >= 1) {
-            for (let j = 0; j < scripts.length; j++) {
-                this.pushThread(scripts[j].blockId, this, true);
-                for (const clone of this._clones) {
-                    this.pushThread(scripts[j].blockId, clone, true);
-                }
+    onTreePopThis() {
+        for (let i = 0; i < Target.possibilityTree[this.originalId].length; i++) {
+            if (Target.possibilityTree[this.originalId][i].id === this.id) {
+                Target.possibilityTree[this.originalId].splice(i, 1);
+                Target.possibilityTree[this.originalId].isOriginal = false;
+                Target.possibilityTree[this.originalId].clone = true;
             }
         }
     }
 
-    changeVariable(variable, nClones, target, onlyTarget) {
+    createPossibilities(nClones, variable) {
+        let originalId = this.originalId;
+        let tree = [...Target.possibilityTree[originalId]];
+        for (const element of tree) {
+            element.changeSuperposeState(variable);
+            element.onTreePopThis();
+            let ThisClone = []
+            for (let i = 0; i < nClones; i++) {
+                let clone = element.makeClone();
+                clone.isClone = true;
+                clone.originalId = element.originalId;
+                Target.isInSuperPositionList[clone.id] = Object.assign({}, Target.isInSuperPositionList[element.id]);
+                element.runtime.addTarget(clone);
+                clone.goBehindOther(this);
+                ThisClone.push(clone);
+                Target.possibilityTree[originalId].push(clone);
+            }
+
+            element.changeVariable(variable, nClones, ThisClone);
+
+            //console.log(tree.length);
+            
+        }
+        console.log("TREE1");
+        console.log(Target.possibilityTree[originalId]);
+        let newOriginal = this.chooseOriginalFromTree(Target.possibilityTree[originalId]);
+        for (let i = 0; i < this.runtime.threads.length; i++) {
+            if (this.runtime.threads[i].target.id === this.id) {
+                const nextBlockId = this.blocks.getNextBlock(this.runtime.threads[i].peekStack());
+                console.log(nextBlockId);
+                console.log(this.blocks);
+                this.runtime._pushThread(nextBlockId, newOriginal)
+            }
+        }/*
+        for (let i = 0; i < this.runtime.threads.length; i++) {
+            if (this.runtime.threads[i].target.id === newOriginal.id) {
+                this.runtime.threads[i].goToNextBlock();
+            }
+        }*/
+        
+        console.log("TREE2");
+        console.log(tree);
+        for (const element of tree) {
+            element.runtime.stopForTarget(this)
+            element.runtime.disposeTarget(this);
+        }
+        
+        let scripts = BlocksRuntimeCache.getScripts(newOriginal.blocks, 'quantum_whenSuperpositionStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of Target.possibilityTree[originalId]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
+                }
+            }
+        }
+    
+        console.log([...Target.possibilityTree[originalId]]);
+        
+    }
+
+    changeVariable(variable, nClones,tree) {
         switch (variable) {
             case "_position_":
 
@@ -155,28 +216,24 @@ class Target extends EventEmitter {
                 let angle = Math.random() * 2 * Math.PI;
                 let distance = Math.random() * radius;
 
-                let posx = target.x + distance * Math.cos(angle);
-                let posy = target.y + distance * Math.sin(angle);
+                let posx = 0;
+                let posy = 0;
 
-                target.setXY(posx, posy);
+                for (const clone of tree) {
+                    // Posición aleatoria para cada clon dentro del mismo radio
+                    angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
+                    distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
 
-                if (!onlyTarget) {
-                    for (const clone of target._clones) {
-                        // Posición aleatoria para cada clon dentro del mismo radio
-                        angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
-                        distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
+                    posx = this.x + distance * Math.cos(angle);
+                    posy = this.y + distance * Math.sin(angle);
 
-                        posx = target.x + distance * Math.cos(angle);
-                        posy = target.y + distance * Math.sin(angle);
-
-                        clone.setXY(posx, posy);
-                    }
+                    clone.setXY(posx, posy);
                 }
 
                 break;
             case "_direction_":
                 let originalDirection = this.direction;
-                let totalEntities = this._clones.length + 1;
+                let totalEntities = nClones;
                 let increment = 360 / totalEntities;
                 let directions = [];
 
@@ -190,17 +247,14 @@ class Target extends EventEmitter {
                     [directions[i], directions[j]] = [directions[j], directions[i]];
                 }
 
-                this.setDirection(directions[0]);
-
-                if (!onlyTarget) {
-                    for (let i = 0; i < target._clones.length; i++) {
-                        this._clones[i].setDirection(directions[i + 1]);
-                    }
+                for (let i = 0; i < tree.length; i++) {
+                    tree[i].setDirection(directions[i]);
                 }
+            
                 break;
             case "_color_":
                 let originalColor = 0;
-                let totalEntitiesColor = target._clones.length + 1;
+                let totalEntitiesColor = nClones;
                 let incrementColor = 200 / totalEntitiesColor;
                 let colors = [];
 
@@ -214,13 +268,11 @@ class Target extends EventEmitter {
                     [colors[i], colors[j]] = [colors[j], colors[i]];
                 }
 
-                target.setEffect("color", colors[0]);
 
-                if (!onlyTarget) {
-                    for (let i = 0; i < target._clones.length; i++) {
-                        target._clones[i].setEffect("color", colors[i + 1]);
-                    }
+                for (let i = 0; i < tree.length; i++) {
+                    tree[i].setEffect("color", colors[i]);
                 }
+                
                 break;
             case "_costume_":
                 break;
@@ -262,17 +314,8 @@ class Target extends EventEmitter {
     }
 
     superpose(nClones, variable) {
-        if (!this._isInSuperpositionVariable[variable]) {
-            this._isInSuperpositionVariable[variable] = true;
-            //this.changeVariable(variable, nClones, this, true);
-            if (!this.hasNoClone) {
-                this.superpose(nClones + 1, variable);
-                for (const clone of this._clones) {
-                    clone.superpose(nClones + 1, variable);
-                }
-            } else {
-                this.createPossibilities(nClones, variable)
-            }
+        if (!this.isSuperpose(variable)) {
+            this.createPossibilities(nClones, variable)
         }
     }
 
@@ -324,6 +367,34 @@ class Target extends EventEmitter {
     }
 
     measure() {
+        let original = null;
+        if (this.isInSuperPosition()) {
+            console.log("Tree");
+            console.log(Target.possibilityTree[this.originalId]);
+            
+            for (let i = Target.possibilityTree[this.originalId].length - 1; i > 0; i-- ) {
+                let aux = Target.possibilityTree[this.originalId][i];
+                if (!aux.isOriginal) {
+                    this.runtime.stopForTarget(aux);
+                    this.runtime.disposeTarget(aux);
+                    //Target.possibilityTree[this.originalId][i].splice(i, 1);
+                } else {
+                    original = aux;
+                    
+                    aux.setEffect("ghost", 0);
+                    this.runtime.stopForTarget(aux);
+                }
+                Target.isInSuperPositionList[aux.id] = {
+                    '_position_': false,
+                    '_direction_': false,
+                    '_color_': false
+                };
+            }
+            Target.possibilityTree[this.originalId] = [original];
+        } else {
+            original = Target.possibilityTree[this.originalId][0];
+        }
+        /*
         if (this.isInSuperPosition()) {
             for (let i = this.runtime.targets.length - 1; i > 0; i--) {
                 if (this.runtime.targets[i].originalId === this.originalId && this.runtime.targets[i].isClone) {
@@ -344,12 +415,12 @@ class Target extends EventEmitter {
                     this._clones = [];
                 }
             }
-        }
+        }*/
 
-        let scripts = BlocksRuntimeCache.getScripts(this.blocks, 'quantum_whenMeasured');
+        let scripts = BlocksRuntimeCache.getScripts(original.blocks, 'quantum_whenMeasured');
         if (scripts.length >= 1) {
             for (let j = 0; j < scripts.length; j++) {
-                this.pushThread(scripts[j].blockId, this, true);
+                original.pushThread(scripts[j].blockId, original, true);
             }
         }
 

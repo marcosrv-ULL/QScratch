@@ -2,9 +2,11 @@ const Cast = require('../util/cast');
 const Sequencer = require('../engine/sequencer');
 const execute = require('../engine/execute');
 const Thread = require('../engine/thread');
+const Target = require('../engine/target');
 const BlocksRuntimeCache = require('../engine/blocks-runtime-cache');
 
 class QuantumBlocks {
+
     constructor(runtime) {
         /**
          * The runtime instantiating this block package.
@@ -12,6 +14,10 @@ class QuantumBlocks {
          */
         this.runtime = runtime;
         //this.hasStart = false;
+
+        this.possibilityTree = {};
+        this.isInSuperPositionList = {};
+        this.entanglementLinks = {};
     }
 
     /**
@@ -60,7 +66,11 @@ class QuantumBlocks {
 
     superposition(args, util) {
         util.target.isOriginal = true;
-        if (!util.target._isInSuperpositionVariable[args.VARIABLES]) {
+        let targetOriginalid = util.target.originalId;
+        if (!Target.possibilityTree[targetOriginalid]) {
+            Target.possibilityTree[targetOriginalid] = [util.target];
+        }
+        if (!Target.isInSuperPositionList[targetOriginalid][args.VARIABLES]) {
             util.target.superpose(parseInt(args.N_CLONES, 10), args.VARIABLES);
         }
         let increment = 0;
@@ -76,22 +86,6 @@ class QuantumBlocks {
                 if (increment > 10000000) increment = 0;
             }, 100);
         }
-    }
-
-
-    pushThread(blockId, target, canStep) {
-        let isBlockIdAndTarget = false
-        for(let i = 0; i < this.runtime.threads.length; i++) {
-            if (this.runtime.threads[i].target.id === target.id && this.runtime.threads[i].topBlock === blockId) {
-                isBlockIdAndTarget = true;
-                break;
-            }
-        }
-        if (!isBlockIdAndTarget) {
-            this.runtime._pushThread(blockId, target)
-            if (canStep) this.runtime.threads[this.runtime.threads.length - 1].goToNextBlock();
-        }
-        
     }
 
     clamp(value) {
