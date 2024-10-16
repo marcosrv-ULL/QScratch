@@ -19,6 +19,8 @@ const BlocksRuntimeCache = require('./blocks-runtime-cache');
 
 class Target extends EventEmitter {
 
+    static possibilityTree = {};
+
     /**
      * @param {Runtime} runtime Reference to the runtime.
      * @param {?Blocks} blocks Blocks instance for the blocks owned by this target.
@@ -77,6 +79,7 @@ class Target extends EventEmitter {
         this.hasNoClone = true;
         this.originalId = this.id;
 
+        
         this._isInSuperpositionVariable = {
             '_position_': false,
             '_direction_': false,
@@ -172,23 +175,50 @@ class Target extends EventEmitter {
 
                 break;
             case "_direction_":
-                let randomDirection = Math.random() * 360;
-                target.setDirection(randomDirection);
+                let originalDirection = this.direction;
+                let totalEntities = this._clones.length + 1;
+                let increment = 360 / totalEntities;
+                let directions = [];
+
+                for (let i = 0; i < totalEntities; i++) {
+                    let newDirection = (originalDirection + i * increment) % 360;
+                    directions.push(newDirection);
+                }
+
+                for (let i = directions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [directions[i], directions[j]] = [directions[j], directions[i]];
+                }
+
+                this.setDirection(directions[0]);
 
                 if (!onlyTarget) {
-                    for (const clone of target._clones) {
-                        randomDirection = Math.random() * 360;
-                        clone.setDirection(randomDirection);
+                    for (let i = 0; i < target._clones.length; i++) {
+                        this._clones[i].setDirection(directions[i + 1]);
                     }
                 }
                 break;
             case "_color_":
-                let randomColor = Math.random() * 200;
-                target.setEffect("color", randomColor);
+                let originalColor = 0;
+                let totalEntitiesColor = target._clones.length + 1;
+                let incrementColor = 200 / totalEntitiesColor;
+                let colors = [];
+
+                for (let i = 0; i < totalEntitiesColor; i++) {
+                    let newColor = originalColor + i * incrementColor;
+                    colors.push(newColor);
+                }
+
+                for (let i = colors.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [colors[i], colors[j]] = [colors[j], colors[i]];
+                }
+
+                target.setEffect("color", colors[0]);
+
                 if (!onlyTarget) {
-                    for (const clone of target._clones) {
-                        randomColor = Math.random() * 200;
-                        clone.setEffect("color", randomColor);
+                    for (let i = 0; i < target._clones.length; i++) {
+                        target._clones[i].setEffect("color", colors[i + 1]);
                     }
                 }
                 break;
@@ -234,8 +264,9 @@ class Target extends EventEmitter {
     superpose(nClones, variable) {
         if (!this._isInSuperpositionVariable[variable]) {
             this._isInSuperpositionVariable[variable] = true;
-            this.changeVariable(variable, nClones, this, true);
+            //this.changeVariable(variable, nClones, this, true);
             if (!this.hasNoClone) {
+                this.superpose(nClones + 1, variable);
                 for (const clone of this._clones) {
                     clone.superpose(nClones + 1, variable);
                 }
@@ -314,7 +345,7 @@ class Target extends EventEmitter {
                 }
             }
         }
-        
+
         let scripts = BlocksRuntimeCache.getScripts(this.blocks, 'quantum_whenMeasured');
         if (scripts.length >= 1) {
             for (let j = 0; j < scripts.length; j++) {

@@ -111,7 +111,7 @@ Blockly.Blocks['motion_pointindirection'] = {
       "args0": [
         {
           "type": "input_value",
-          "name": "DIR  ECTION"
+          "name": "DIRECTION"
         }
       ],
       "category": Blockly.Categories.motion,
