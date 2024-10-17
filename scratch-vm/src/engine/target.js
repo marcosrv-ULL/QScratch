@@ -77,24 +77,27 @@ class Target extends EventEmitter {
          */
         this._edgeActivatedHatValues = {};
 
+        this.isGarbage = false;
+
         this._clones = [];
         this.hasNoClone = true;
         this.originalId = this.id;
 
         
-        Target.isInSuperPositionList[this.id] = {
+        this._isInSuperPositionList = {
             '_position_': false,
             '_direction_': false,
             '_color_': false
         };
 
-        Target.entanglementLinks[this.id] = {
+        this._entanglementLinks = {
             '_position_': [],
             '_direction_': [],
             '_color_': []
         }
     }
 
+   
 
     isEntangle() {
         return Object.values(this._entanglementLinks).some(value => value.length > 0);
@@ -108,7 +111,7 @@ class Target extends EventEmitter {
     }
 
     isInSuperPosition() {
-        return Object.values(Target.isInSuperPositionList[this.originalId]).some(value => value === true);
+        return Object.values(this._isInSuperPositionList).some(value => value === true);
     }
 
     isSuperpose(variable) {
@@ -367,63 +370,17 @@ class Target extends EventEmitter {
     }
 
     measure() {
-        let original = null;
-        if (this.isInSuperPosition()) {
-            console.log("Tree");
-            console.log(Target.possibilityTree[this.originalId]);
+        if (this.isOriginal) {
+            this._isInSuperPositionList = {
+                '_position_': false,
+                '_direction_': false,
+                '_color_': false
+            }
             
-            for (let i = Target.possibilityTree[this.originalId].length - 1; i > 0; i-- ) {
-                let aux = Target.possibilityTree[this.originalId][i];
-                if (!aux.isOriginal) {
-                    this.runtime.stopForTarget(aux);
-                    this.runtime.disposeTarget(aux);
-                    //Target.possibilityTree[this.originalId][i].splice(i, 1);
-                } else {
-                    original = aux;
-                    
-                    aux.setEffect("ghost", 0);
-                    this.runtime.stopForTarget(aux);
-                }
-                Target.isInSuperPositionList[aux.id] = {
-                    '_position_': false,
-                    '_direction_': false,
-                    '_color_': false
-                };
-            }
-            Target.possibilityTree[this.originalId] = [original];
+            this.setEffect("ghost", 0);
         } else {
-            original = Target.possibilityTree[this.originalId][0];
+            this.isGarbage = true;
         }
-        /*
-        if (this.isInSuperPosition()) {
-            for (let i = this.runtime.targets.length - 1; i > 0; i--) {
-                if (this.runtime.targets[i].originalId === this.originalId && this.runtime.targets[i].isClone) {
-                    this.runtime.targets[i].hasNoClone = true;
-                    //this.runtime.targets[i]._clones = [];
-                    //Object.keys(this.runtime.targets[i]._isInSuperpositionVariable).forEach(key => {
-                    //    this.runtime.targets[i]._isInSuperpositionVariable[key] = false;
-                    //});
-                    this.runtime.stopForTarget(this.runtime.targets[i])
-                    this.runtime.disposeTarget(this.runtime.targets[i]);
-                } else if (this.runtime.targets[i].originalId === this.originalId) {
-                    Object.keys(this._isInSuperpositionVariable).forEach(key => {
-                        this._isInSuperpositionVariable[key] = false;
-                    });
-                    this.setEffect("ghost", 0);
-                    this.runtime.stopForTarget(this);
-                    this.hasNoClone = true;
-                    this._clones = [];
-                }
-            }
-        }*/
-
-        let scripts = BlocksRuntimeCache.getScripts(original.blocks, 'quantum_whenMeasured');
-        if (scripts.length >= 1) {
-            for (let j = 0; j < scripts.length; j++) {
-                original.pushThread(scripts[j].blockId, original, true);
-            }
-        }
-
     }
 
     /**
@@ -841,6 +798,7 @@ class Target extends EventEmitter {
 
         if (this.runtime) {
             this.runtime.removeExecutable(this);
+            this.measure();
         }
     }
 
