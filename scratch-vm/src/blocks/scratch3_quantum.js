@@ -102,11 +102,12 @@ class QuantumBlocks {
         let originalId2 = child.originalId;
         if (!this.isSuperpose(util.target, variable) && !this.isSuperpose(child, variable)) {
             this.createPossibilities(util.target, nClones, variable);
-            this.createPossibilities(child, nClones, variable);
+            this.createPossibilitiesConditioned(child, nClones, variable, this.getOriginal(originalId1));
         } else if (!this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) {
-            this.createPossibilities(util.target, nClones, variable);
+            this.createPossibilitiesConditioned(util.target, nClones, variable, this.getOriginal(originalId2));
+
         } else {
-            this.createPossibilities(child, nClones, variable);
+            this.createPossibilitiesConditioned(child, nClones, variable, this.getOriginal(originalId1));
         }
 
         let increment = 1;
@@ -168,6 +169,37 @@ class QuantumBlocks {
         return this.possibilityTree[id][originalIndex];
     }
 
+    searchInTreeForSameProperties(original, properties, tree) {
+        for (const poss of tree) {
+            let isOriginal = false;
+            for (const property of properties) {
+                if (property == '_size_') {
+
+                } else if (property == '_direction_') {
+                    if (original.direction == poss.direction) {
+                        poss.isOriginal = true;
+                        return poss;
+                    }
+                } else if (property == '_color_') {
+
+                } else if (property == '_costume_') {
+
+                }
+            }
+        }
+    }
+
+    chooseOriginalFromTreeConditioned(id, variables, tree) {
+        for (let i = 0; i < this.possibilityTree[id].length; i++) {
+            if (this.possibilityTree[id][i].isOriginal) {
+                this.searchInTreeForSameProperties(this.possibilityTree[id][i], variables, tree);
+            }
+        }
+        this.possibilityTree[id][originalIndex].isOriginal = true;
+        this.possibilityTree[id][originalIndex].clone = false;
+        return this.possibilityTree[id][originalIndex];
+    }
+
     chooseOriginalFromTreeWithIndex(id, index) {
         let originalIndex = index;
         for (let i = 0; i < this.possibilityTree[id].length; i++) {
@@ -216,6 +248,56 @@ class QuantumBlocks {
             this.changeVariable(element, variable, nClones, ThisClone);
         }
         let newOriginal = this.chooseOriginalFromTree(originalId);
+        for (let i = 0; i < this.runtime.threads.length; i++) {
+            let targetThread = this.runtime.threads[i].target;
+            if (targetThread.id === originalTarget.id) {
+                const nextBlockId = originalTarget.blocks.getNextBlock(this.runtime.threads[i].peekStack());
+                this.runtime.threads[i].id = newOriginal.id;
+                this.runtime._pushThread(nextBlockId, newOriginal);
+            }
+        }
+
+        for (const element of tree) {
+            element.runtime.disposeTarget(element);
+        }
+        let scripts = BlocksRuntimeCache.getScripts(newOriginal.blocks, 'quantum_whenSuperpositionStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
+                }
+            }
+        }
+
+
+    }
+
+    createPossibilitiesConditioned(target, nClones, variable, conditionedTarget) {
+        let originalId = target.originalId;
+        let tree = [...this.possibilityTree[originalId]];
+        let originalTarget = this.getOriginal(originalId);
+        target._isInSuperPositionList[variable] = true;
+        for (const element of tree) {
+            this.changeSuperposeState(element, variable);
+            this.onTreePopThis(element);
+            let ThisClone = [];
+            for (let i = 0; i < nClones; i++) {
+                let clone = element.makeClone();
+                if (clone) {
+                    clone.isClone = true;
+                    clone.originalId = element.originalId;
+                    clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                    this.runtime.addTarget(clone);
+                    clone.goBehindOther(element);
+                    ThisClone.push(clone);
+                    this.possibilityTree[originalId].push(clone);
+                }
+
+            }
+
+            this.changeVariable(element, variable, nClones, ThisClone);
+        }
+        let newOriginal = this.searchInTreeForSameProperties(conditionedTarget, [variable], this.possibilityTree[originalId]);
         for (let i = 0; i < this.runtime.threads.length; i++) {
             let targetThread = this.runtime.threads[i].target;
             if (targetThread.id === originalTarget.id) {
