@@ -42,8 +42,8 @@ Blockly.Msg.DIALOGS_RANDOMCHOICE = 'random Choice';
 
 // Quantum Blocks
 
-Blockly.Msg.QUANTUM_MEASURE = 'medir';
-Blockly.Msg.QUANTUM_WHENMEASURED = 'cuando se mida'
+Blockly.Msg.QUANTUM_MEASURE = 'measure';
+Blockly.Msg.QUANTUM_WHENMEASURED = 'when measured'
 Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART = 'when superposition started'
 Blockly.Msg.QUANTUM_WHENENTANGLEMENTSTART = 'when entanglement started'
 Blockly.Msg.QUANTUM_SUPERPOSITION = 'superposition variable %1 nº clones %2 lista %3';
