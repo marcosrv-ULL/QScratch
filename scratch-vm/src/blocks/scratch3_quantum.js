@@ -72,10 +72,13 @@ class QuantumBlocks {
     }
 
     entanglementNClones(args, util) {
+        this.collectPossibiltyTreeGarbage();
         const child = this.runtime.getSpriteTargetByName(args.TARGET);
         if (!child) return;
         const variable = args.VARIABLES;
         const nClones = args.N_CLONES;
+        if (this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) return;
+
         if (!this.entanglementLinks[util.target.originalId]) {
             this.entanglementLinks[util.target.originalId] = {
                 '_position_': [],
@@ -94,83 +97,53 @@ class QuantumBlocks {
             if (!this.possibilityTree[child.originalId]) this.possibilityTree[child.originalId] = [child];
         }
         this.addEntangleLink(util.target, child, variable);
-    }
 
-    entangle(target1, target2, variable) {
-        switch (variable) {
-            case "_position_":
+        let originalId1 = util.target.originalId;
+        let originalId2 = child.originalId;
+        if (!this.isSuperpose(util.target, variable) && !this.isSuperpose(child, variable)) {
+            this.createPossibilities(util.target, nClones, variable);
+            this.createPossibilities(child, nClones, variable);
+        } else if (!this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) {
+            this.createPossibilities(util.target, nClones, variable);
+        } else {
+            this.createPossibilities(child, nClones, variable);
+        }
 
-                const MAX_CLONES = 300;
+        let increment = 1;
 
-                let numClones = Math.min(nClones, MAX_CLONES);
-
-                let radius = numClones * 10;
-                radius = Math.min(radius, 200);
-
-                let angle = Math.random() * 2 * Math.PI;
-                let distance = Math.random() * radius;
-
-                let posx = 0;
-                let posy = 0;
-
-                for (const clone of tree) {
-                    // Posición aleatoria para cada clon dentro del mismo radio
-                    angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
-                    distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
-
-                    posx = target.x + distance * Math.cos(angle);
-                    posy = target.y + distance * Math.sin(angle);
-
-                    clone.setXY(posx, posy);
+        if (!this.runtime.effectGhost) {
+            this.runtime.effectGhost = setInterval(() => {
+                for (let i = 0; i < this.runtime.targets.length; i++) {
+                    if (this.runtime.targets[i].isInSuperPosition()) {
+                        this.runtime.targets[i].setEffect("ghost", this.clampReflection(increment + (i * 8.5)));
+                    }
                 }
+                increment += 10;
+                if (increment > 10000000) increment = 0;
+            }, 100);
+        }
+        let original1 = this.getOriginal(originalId1);
+        let original2 = this.getOriginal(originalId2);
 
-                break;
-            case "_direction_":
-                let originalDirection = target.direction;
-                let totalEntities = nClones;
-                let increment = 360 / totalEntities;
-                let directions = [];
-
-                for (let i = 0; i < totalEntities; i++) {
-                    let newDirection = (originalDirection + i * increment) % 360;
-                    directions.push(newDirection);
+        let scripts = BlocksRuntimeCache.getScripts(original1.blocks, 'quantum_whenEntanglementStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId1]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
                 }
+            }
+        }
 
-                for (let i = directions.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [directions[i], directions[j]] = [directions[j], directions[i]];
+        scripts = BlocksRuntimeCache.getScripts(original2.blocks, 'quantum_whenEntanglementStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId2]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
                 }
-
-                for (let i = 0; i < tree.length; i++) {
-                    tree[i].setDirection(directions[i]);
-                }
-
-                break;
-            case "_color_":
-                let originalColor = 0;
-                let totalEntitiesColor = nClones;
-                let incrementColor = 200 / totalEntitiesColor;
-                let colors = [];
-
-                for (let i = 0; i < totalEntitiesColor; i++) {
-                    let newColor = originalColor + i * incrementColor;
-                    colors.push(newColor);
-                }
-
-                for (let i = colors.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [colors[i], colors[j]] = [colors[j], colors[i]];
-                }
-
-                for (let i = 0; i < tree.length; i++) {
-                    tree[i].setEffect("color", colors[i]);
-                }
-
-                break;
-            case "_costume_":
-                break;
+            }
         }
     }
+
 
     onTreePopThis(target) {
         for (let i = 0; i < this.possibilityTree[target.originalId].length; i++) {
@@ -195,6 +168,19 @@ class QuantumBlocks {
         return this.possibilityTree[id][originalIndex];
     }
 
+    chooseOriginalFromTreeWithIndex(id, index) {
+        let originalIndex = index;
+        for (let i = 0; i < this.possibilityTree[id].length; i++) {
+            if (this.possibilityTree[id][i].isOriginal) {
+                this.possibilityTree[id][i].isOriginal = false;
+                this.possibilityTree[id][i].clone = true;
+            }
+        }
+        this.possibilityTree[id][originalIndex].isOriginal = true;
+        this.possibilityTree[id][originalIndex].clone = false;
+        return this.possibilityTree[id][originalIndex];
+    }
+
     getOriginal(targetId) {
         for (let i = 0; i < this.possibilityTree[targetId].length; i++) {
             if (this.possibilityTree[targetId][i].isOriginal) {
@@ -202,6 +188,7 @@ class QuantumBlocks {
             }
         }
     }
+
 
     createPossibilities(target, nClones, variable) {
         let originalId = target.originalId;
@@ -211,7 +198,7 @@ class QuantumBlocks {
         for (const element of tree) {
             this.changeSuperposeState(element, variable);
             this.onTreePopThis(element);
-            let ThisClone = []
+            let ThisClone = [];
             for (let i = 0; i < nClones; i++) {
                 let clone = element.makeClone();
                 if (clone) {
@@ -227,8 +214,6 @@ class QuantumBlocks {
             }
 
             this.changeVariable(element, variable, nClones, ThisClone);
-
-
         }
         let newOriginal = this.chooseOriginalFromTree(originalId);
         for (let i = 0; i < this.runtime.threads.length; i++) {
@@ -467,12 +452,7 @@ class QuantumBlocks {
         if (!target) return;
         let originalId = target.originalId;
         let original = null;
-        for (let key in this.entanglementLinks[target.originalId]) {
-            for (let i = 0; i < this.entanglementLinks[target.originalId][key].length; i++) {
-                this.deleteEntangleLink(target, this.entanglementLinks[target.originalId][key][i], key);
-                this.measureTarget(this.entanglementLinks[target.originalId][key][i]);
-            }
-        }
+        
         for (let i = this.possibilityTree[originalId].length - 1; i >= 0; i--) {
             let target1 = this.possibilityTree[originalId][i];
             this.runtime.stopForTarget(target1);
@@ -493,6 +473,13 @@ class QuantumBlocks {
             }
         }
         
+        for (let key in this.entanglementLinks[target.originalId]) {
+            for (let i = 0; i < this.entanglementLinks[target.originalId][key].length; i++) {
+                let current = this.entanglementLinks[target.originalId][key][i];
+                this.deleteEntangleLink(target, current, key);
+                this.measureTarget(current);
+            }
+        }
 
         let scripts = BlocksRuntimeCache.getScripts(original.blocks, 'quantum_whenMeasured');
         if (scripts.length >= 1) {

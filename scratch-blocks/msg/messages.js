@@ -48,12 +48,15 @@ Blockly.Msg.QUANTUM_WHENENTANGLEMENTSTART = 'cuando empiece entrelazamiento'
 Blockly.Msg.QUANTUM_SUPERPOSITION = 'superposition variable %1 nº clones %2 lista %3';
 Blockly.Msg.QUANTUM_SUPERPOSITION1 = 'superponer la %1 posibilidades: %2 rango: %3';
 Blockly.Msg.QUANTUM_SUPERPOSITION_NO_LIST = 'superponer la %1 posibilidades: %2 ';
+Blockly.Msg.QUANTUM_SUPERPOSITION_ONLY_LIST = 'superponer la %1 rango: %2 ';
 Blockly.Msg.QUANTUM_ENTANGLEMENT = 'entrelazar %1 de %2 según %3 y %4';
 Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST = 'entrelazar %1 de %2 en %3 posibilidades';
+Blockly.Msg.QUANTUM_ENTANGLEMENT_ONLY_LIST = 'entrelazar %1 de %2 rango %3';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION = 'posición';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION = 'dirección';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR = 'color';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME = 'disfraz';
+Blockly.Msg.QUANTUM_SUPERPOSITION1_SIZE = 'tamaño'
 
 
 // Control blocks

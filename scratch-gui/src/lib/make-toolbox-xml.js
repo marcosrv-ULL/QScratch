@@ -24,6 +24,17 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+        <block type="quantum_superposition_only_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="LISTA">
+                <shadow type="math_number">
+                    <field name="NUM">lista</field>
+                </shadow>
+            </value>
+        </block>
         <block type="quantum_superpositions">
             <value name="VARIABLE">
                 <shadow type="motion_glideto_menu">
@@ -56,6 +67,22 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             <value name="N_CLONES">
                 <shadow type="math_number">
                     <field name="NUM">1</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="quantum_entanglement_only_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="TARGET">
+                <shadow type="text">
+                    <field name="TEXT">Nombre</field>
+                </shadow>
+            </value>
+            <value name="LISTA1">
+                <shadow type="math_number">
+                    <field name="NUM">rango1</field>
                 </shadow>
             </value>
         </block>

@@ -1,6 +1,6 @@
 const blockColors = {
     quantum: {
-        primary: "#041c9b",   
+        primary: "#5C068C",   
         secondary: "#7b61ff",  
         tertiary: "#1c1f26",   
         quaternary: "#e6e6e6" 

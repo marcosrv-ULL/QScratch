@@ -26,7 +26,7 @@ Blockly.Colours = {
   // SVG colours: these must be specificed in #RRGGBB style
   // To add an opacity, this must be specified as a separate property (for SVG fill-opacity)
   "quantum": {
-    "primary": "#041c9b",   
+    "primary": "#5C068C",   
     "secondary": "#7b61ff",  
     "tertiary": "#1c1f26",   
     "quaternary": "#e6e6e6" 
