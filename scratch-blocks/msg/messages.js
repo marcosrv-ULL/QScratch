@@ -41,6 +41,25 @@ Blockly.Msg.DIALOGS_WHILECONFIRMED = 'While Confirm %1';
 Blockly.Msg.DIALOGS_RANDOMCHOICE = 'random Choice';
 
 // Quantum Blocks
+
+Blockly.Msg.QUANTUM_MEASURE = 'medir';
+Blockly.Msg.QUANTUM_WHENMEASURED = 'cuando se mida'
+Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART = 'when superposition started'
+Blockly.Msg.QUANTUM_WHENENTANGLEMENTSTART = 'when entanglement started'
+Blockly.Msg.QUANTUM_SUPERPOSITION = 'superposition variable %1 nº clones %2 lista %3';
+Blockly.Msg.QUANTUM_SUPERPOSITION1 = 'superpose %1 possibilities: %2 list: %3';
+Blockly.Msg.QUANTUM_SUPERPOSITION_NO_LIST = 'superpose %1 possibilities: %2 ';
+Blockly.Msg.QUANTUM_SUPERPOSITION_ONLY_LIST = 'superpose %1 list: %2 ';
+Blockly.Msg.QUANTUM_ENTANGLEMENT = 'entangle %1 with %2 possibilities %3 list: %4';
+Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST = 'entangle %1 with %2 possibilities %3';
+Blockly.Msg.QUANTUM_ENTANGLEMENT_ONLY_LIST = 'entangle %1 with %2 list: %3';
+Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION = 'position';
+Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION = 'direction';
+Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR = 'colour';
+Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME = 'costume';
+Blockly.Msg.QUANTUM_SUPERPOSITION1_SIZE = 'size'
+
+/*
 Blockly.Msg.QUANTUM_MEASURE = 'medir';
 Blockly.Msg.QUANTUM_WHENMEASURED = 'cuando se mida'
 Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART = 'cuando empiece superposición'
@@ -56,7 +75,7 @@ Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION = 'posición';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION = 'dirección';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR = 'color';
 Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME = 'disfraz';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_SIZE = 'tamaño'
+Blockly.Msg.QUANTUM_SUPERPOSITION1_SIZE = 'tamaño'*/
 
 
 // Control blocks
