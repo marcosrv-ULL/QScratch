@@ -87,13 +87,17 @@ class Target extends EventEmitter {
         this._isInSuperPositionList = {
             '_position_': false,
             '_direction_': false,
-            '_color_': false
+            '_color_': false,
+            '_size_': false,
+            '_costume_': false
         };
 
         this._entanglementLinks = {
             '_position_': [],
             '_direction_': [],
-            '_color_': []
+            '_color_': [],
+            '_size_': [],
+            '_costume_': []
         }
     }
 
@@ -109,48 +113,14 @@ class Target extends EventEmitter {
         Target.isInSuperPositionList[this.originalId][variable] = true;
     }
 
-    
-
-    changeVariableWithList(variable, target, list, onlyTarget) {
-        let rangeList = list;
-
-        switch (variable) {
-            case "_position_":
-                this.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                if (!onlyTarget) {
-                    for (const clone of this._clones) {
-                        clone.setXY(rangeList[(Math.floor(Math.random() * rangeList.length))], rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                    }
-                }
-                break;
-            case "_direction_":
-                this.setDirection(this.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                if (!onlyTarget) {
-                    for (const clone of this._clones) {
-                        clone.setDirection(clone.direction + rangeList[(Math.floor(Math.random() * rangeList.length))]);
-
-                    }
-                }
-                break;
-            case "_color_":
-                this.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                if (!onlyTarget) {
-                    for (const clone of this._clones) {
-                        clone.setEffect("color", rangeList[(Math.floor(Math.random() * rangeList.length))]);
-                    }
-                }
-                break;
-            case "_costume_":
-                break;
-        }
-    }
-
     measure() {
         if (this.isOriginal) {
             this._isInSuperPositionList = {
                 '_position_': false,
                 '_direction_': false,
-                '_color_': false
+                '_color_': false,
+                '_size_': false,
+                '_costume_': false
             }
             
             this.setEffect("ghost", 0);

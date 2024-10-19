@@ -83,7 +83,9 @@ class QuantumBlocks {
             this.entanglementLinks[util.target.originalId] = {
                 '_position_': [],
                 '_direction_': [],
-                '_color_': []
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
             }
             if (!this.possibilityTree[util.target.originalId]) this.possibilityTree[util.target.originalId] = [util.target];
         }
@@ -92,7 +94,9 @@ class QuantumBlocks {
             this.entanglementLinks[child.originalId] = {
                 '_position_': [],
                 '_direction_': [],
-                '_color_': []
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
             }
             if (!this.possibilityTree[child.originalId]) this.possibilityTree[child.originalId] = [child];
         }
@@ -174,16 +178,25 @@ class QuantumBlocks {
             let isOriginal = false;
             for (const property of properties) {
                 if (property == '_size_') {
-
+                    if (original.size == poss.size) {
+                        poss.isOriginal = true;
+                        return poss;
+                    }
                 } else if (property == '_direction_') {
                     if (original.direction == poss.direction) {
                         poss.isOriginal = true;
                         return poss;
                     }
                 } else if (property == '_color_') {
-
+                    if (original.effects.color == original.effects.color) {
+                        poss.isOriginal = true;
+                        return poss;
+                    }
                 } else if (property == '_costume_') {
-
+                    if (original.currentCostume == original.currentCostume) {
+                        poss.isOriginal = true;
+                        return poss;
+                    }
                 }
             }
         }
@@ -420,6 +433,7 @@ class QuantumBlocks {
     }
 
     changeVariable(target, variable, nClones, tree) {
+        console.log(target);
         switch (variable) {
             case "_position_":
 
@@ -491,7 +505,44 @@ class QuantumBlocks {
 
                 break;
             case "_costume_":
+                let currentCostume = target.currentCostume;
+                let totalNOfCostume = target.sprite.costumes_.length;
+                let totalEntitiesCostume = nClones;
+                let costumes = [];
+
+                for (let i = 0; i < totalEntitiesCostume; i++) {
+                    let newCostume = (currentCostume + i) % totalNOfCostume;
+                    costumes.push(newCostume);
+                }
+
+                for (let i = costumes.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [costumes[i], costumes[j]] = [costumes[j], costumes[i]];
+                }
+
+                for (let i = 0; i < tree.length; i++) {
+                    tree[i].setCostume(costumes[i]);
+                }
                 break;
+            case "_size_":
+                let initialSize = target.size; 
+                let totalEntitiesSize = nClones; 
+                let sizes = [];
+
+                let minSize = initialSize * 0.5; 
+                let maxSize = initialSize * 1.5; 
+
+                for (let i = 0; i < totalEntitiesSize; i++) {
+                    let progress = i / (totalEntitiesSize - 1); 
+                    let newSize = maxSize - progress * (maxSize - minSize); 
+                    sizes.push(newSize);
+                }
+
+                for (let i = 0; i < tree.length; i++) {
+                    tree[i].setSize(sizes[i]);
+                }
+                break;
+
         }
     }
 
@@ -534,7 +585,7 @@ class QuantumBlocks {
         if (!target) return;
         let originalId = target.originalId;
         let original = null;
-        
+
         for (let i = this.possibilityTree[originalId].length - 1; i >= 0; i--) {
             let target1 = this.possibilityTree[originalId][i];
             this.runtime.stopForTarget(target1);
@@ -547,14 +598,16 @@ class QuantumBlocks {
                 target1._isInSuperPositionList = {
                     '_position_': false,
                     '_direction_': false,
-                    '_color_': false
+                    '_color_': false,
+                    '_size_': false,
+                    '_costume_': false
                 }
 
                 target1.setEffect("ghost", 0);
                 original = target1;
             }
         }
-        
+
         for (let key in this.entanglementLinks[target.originalId]) {
             for (let i = 0; i < this.entanglementLinks[target.originalId][key].length; i++) {
                 let current = this.entanglementLinks[target.originalId][key][i];
