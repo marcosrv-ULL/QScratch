@@ -123,6 +123,14 @@ class Target extends EventEmitter {
                 '_costume_': false
             }
             
+            this._entanglementLinks = {
+                '_position_': [],
+                '_direction_': [],
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
+            }
+
             this.setEffect("ghost", 0);
         } else {
             this.isGarbage = true;

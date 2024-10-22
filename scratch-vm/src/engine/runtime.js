@@ -2071,6 +2071,7 @@ class Runtime extends EventEmitter {
      * Stop "everything."
      */
     stopAll() {
+        console.log("stopAll")
         if(this.effectGhost) {
             clearInterval(this.effectGhost);
             this.effectGhost = null;

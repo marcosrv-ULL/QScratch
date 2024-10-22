@@ -78,8 +78,7 @@ class QuantumBlocks {
         const variable = args.VARIABLES;
         const nClones = args.N_CLONES;
         if (this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) return;
-
-        if (!this.entanglementLinks[util.target.originalId]) {
+        if (!this.isEntangle(util.target)) {
             this.entanglementLinks[util.target.originalId] = {
                 '_position_': [],
                 '_direction_': [],
@@ -87,10 +86,9 @@ class QuantumBlocks {
                 '_size_': [],
                 '_costume_': []
             }
-            if (!this.possibilityTree[util.target.originalId]) this.possibilityTree[util.target.originalId] = [util.target];
-        }
-
-        if (!this.entanglementLinks[child.originalId]) {
+            if (!this.isSuperpose(util.target)) this.possibilityTree[util.target.originalId] = [util.target];
+        } 
+        if (!this.isEntangle(child)) {
             this.entanglementLinks[child.originalId] = {
                 '_position_': [],
                 '_direction_': [],
@@ -98,8 +96,12 @@ class QuantumBlocks {
                 '_size_': [],
                 '_costume_': []
             }
-            if (!this.possibilityTree[child.originalId]) this.possibilityTree[child.originalId] = [child];
+            if (!this.isSuperpose(child)) this.possibilityTree[child.originalId] = [child];
         }
+
+        console.log(this.entanglementLinks[util.target.originalId][args.VARIABLES])
+        if (!this.entanglementLinks[util.target.originalId][args.VARIABLES].length == 0 || !this.entanglementLinks[child.originalId][args.VARIABLES].length == 0) return;
+
         this.addEntangleLink(util.target, child, variable);
 
         let originalId1 = util.target.originalId;
@@ -188,12 +190,12 @@ class QuantumBlocks {
                         return poss;
                     }
                 } else if (property == '_color_') {
-                    if (original.effects.color == original.effects.color) {
+                    if (original.effects["color"] == poss.effects["color"]) {
                         poss.isOriginal = true;
                         return poss;
                     }
                 } else if (property == '_costume_') {
-                    if (original.currentCostume == original.currentCostume) {
+                    if (original.currentCostume == poss.currentCostume) {
                         poss.isOriginal = true;
                         return poss;
                     }
@@ -625,6 +627,11 @@ class QuantumBlocks {
     }
 
     measure(args, util) {
+        console.log(util.target.effects["color"]);
+        if (!this.isInSuperPosition(util.target)) {
+            this.possibilityTree[util.target.originalId] = [util.target];
+
+        }
         this.measureTarget(util.target);
     }
 }
