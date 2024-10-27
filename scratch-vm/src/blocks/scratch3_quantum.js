@@ -27,11 +27,124 @@ class QuantumBlocks {
         return {
             quantum_entanglement: this.entanglement,
             quantum_entanglement_no_list: this.entanglementNClones,
+            quantum_entanglement_only_list: this.entanglementOnlyList,
             quantum_superposition_no_list: this.superposition,
             quantum_superpositions: this.superpositions,
+            quantum_superposition_only_list: this.superpositionOnlyList,
+
             quantum_measure: this.measure,
             quantum_whenSuperpositionStart: this.whenSuperpositionStart
         };
+    }
+
+    entanglementOnlyList(args, util) {
+        this.collectPossibiltyTreeGarbage();
+        if (args.LISTA1 == "list") {
+            return;
+        }
+        const child = this.runtime.getSpriteTargetByName(args.TARGET);
+        if (!child) return;
+        const variable = args.VARIABLES;
+        const nClones = this.convertToList(args.LISTA1).length;
+        if (this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) return;
+        if (!this.isEntangle(util.target)) {
+            this.entanglementLinks[util.target.originalId] = {
+                '_position_': [],
+                '_direction_': [],
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
+            }
+            if (!this.isSuperpose(util.target)) this.possibilityTree[util.target.originalId] = [util.target];
+        } 
+        if (!this.isEntangle(child)) {
+            this.entanglementLinks[child.originalId] = {
+                '_position_': [],
+                '_direction_': [],
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
+            }
+            if (!this.isSuperpose(child)) this.possibilityTree[child.originalId] = [child];
+        }
+
+        console.log(this.entanglementLinks[util.target.originalId][args.VARIABLES])
+        if (!this.entanglementLinks[util.target.originalId][args.VARIABLES].length == 0 || !this.entanglementLinks[child.originalId][args.VARIABLES].length == 0) return;
+
+        this.addEntangleLink(util.target, child, variable);
+
+        let originalId1 = util.target.originalId;
+        let originalId2 = child.originalId;
+        if (!this.isSuperpose(util.target, variable) && !this.isSuperpose(child, variable)) {
+            this.createPossibilities(util.target, nClones, args.VARIABLES, true, this.convertToList(args.LISTA1));
+            this.createPossibilitiesConditioned(child, nClones, variable, this.getOriginal(originalId1), true, this.convertToList(args.LISTA1));
+        } else if (!this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) {
+            this.createPossibilitiesConditioned(util.target, nClones, variable, this.getOriginal(originalId2), true, this.convertToList(args.LISTA1));
+        } else {
+            this.createPossibilitiesConditioned(child, nClones, variable, this.getOriginal(originalId1), true, this.convertToList(args.LISTA1));
+        }
+
+        let increment = 1;
+
+        if (!this.runtime.effectGhost) {
+            this.runtime.effectGhost = setInterval(() => {
+                for (let i = 0; i < this.runtime.targets.length; i++) {
+                    if (this.runtime.targets[i].isInSuperPosition()) {
+                        this.runtime.targets[i].setEffect("ghost", this.clampReflection(increment + (i * 8.5)));
+                    }
+                }
+                increment += 10;
+                if (increment > 10000000) increment = 0;
+            }, 100);
+        }
+        let original1 = this.getOriginal(originalId1);
+        let original2 = this.getOriginal(originalId2);
+
+        let scripts = BlocksRuntimeCache.getScripts(original1.blocks, 'quantum_whenEntanglementStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId1]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
+                }
+            }
+        }
+
+        scripts = BlocksRuntimeCache.getScripts(original2.blocks, 'quantum_whenEntanglementStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId2]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
+                }
+            }
+        }
+    }
+
+    superpositionOnlyList(args, util) {
+        console.log(args)
+        this.collectPossibiltyTreeGarbage();
+        util.target.isOriginal = true;
+        if (!this.isInSuperPosition(util.target)) {
+            this.possibilityTree[util.target.originalId] = [util.target];
+
+        }
+        if (!this.isSuperpose(util.target, args.VARIABLES)) {
+            this.createPossibilities(util.target, this.convertToList(args.LISTA).length, args.VARIABLES, true, this.convertToList(args.LISTA));
+        }
+
+        let increment = 0;
+
+        if (!this.runtime.effectGhost) {
+            this.runtime.effectGhost = setInterval(() => {
+                for (let i = 0; i < this.runtime.targets.length; i++) {
+                    if (this.runtime.targets[i].isInSuperPosition()) {
+                        this.runtime.targets[i].setEffect("ghost", this.clampReflection(increment + (i * 8.5)));
+                    }
+                }
+                increment += 10;
+                if (increment > 10000000) increment = 0;
+            }, 100);
+        }
+
     }
 
     getHats() {
@@ -63,12 +176,85 @@ class QuantumBlocks {
     }
 
     entanglement(args, util) {
+        this.collectPossibiltyTreeGarbage();
+        if (args.LISTA2 == "list") {
+            return;
+        }
         const child = this.runtime.getSpriteTargetByName(args.TARGET);
         if (!child) return;
         const variable = args.VARIABLES;
-        const list1 = args.LISTA1;
-        const list2 = args.LISTA2;
+        const nClones = parseInt(args.LISTA1, 10);
+        if (this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) return;
+        if (!this.isEntangle(util.target)) {
+            this.entanglementLinks[util.target.originalId] = {
+                '_position_': [],
+                '_direction_': [],
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
+            }
+            if (!this.isSuperpose(util.target)) this.possibilityTree[util.target.originalId] = [util.target];
+        } 
+        if (!this.isEntangle(child)) {
+            this.entanglementLinks[child.originalId] = {
+                '_position_': [],
+                '_direction_': [],
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
+            }
+            if (!this.isSuperpose(child)) this.possibilityTree[child.originalId] = [child];
+        }
+
+        console.log(this.entanglementLinks[util.target.originalId][args.VARIABLES])
+        if (!this.entanglementLinks[util.target.originalId][args.VARIABLES].length == 0 || !this.entanglementLinks[child.originalId][args.VARIABLES].length == 0) return;
+
         this.addEntangleLink(util.target, child, variable);
+
+        let originalId1 = util.target.originalId;
+        let originalId2 = child.originalId;
+        if (!this.isSuperpose(util.target, variable) && !this.isSuperpose(child, variable)) {
+            this.createPossibilities(util.target, nClones, args.VARIABLES, true, this.convertToList(args.LISTA2));
+            this.createPossibilitiesConditioned(child, nClones, variable, this.getOriginal(originalId1), true, this.convertToList(args.LISTA2));
+        } else if (!this.isSuperpose(util.target, variable) && this.isSuperpose(child, variable)) {
+            this.createPossibilitiesConditioned(util.target, nClones, variable, this.getOriginal(originalId2), true, this.convertToList(args.LISTA2));
+        } else {
+            this.createPossibilitiesConditioned(child, nClones, variable, this.getOriginal(originalId1), true, this.convertToList(args.LISTA2));
+        }
+
+        let increment = 1;
+
+        if (!this.runtime.effectGhost) {
+            this.runtime.effectGhost = setInterval(() => {
+                for (let i = 0; i < this.runtime.targets.length; i++) {
+                    if (this.runtime.targets[i].isInSuperPosition()) {
+                        this.runtime.targets[i].setEffect("ghost", this.clampReflection(increment + (i * 8.5)));
+                    }
+                }
+                increment += 10;
+                if (increment > 10000000) increment = 0;
+            }, 100);
+        }
+        let original1 = this.getOriginal(originalId1);
+        let original2 = this.getOriginal(originalId2);
+
+        let scripts = BlocksRuntimeCache.getScripts(original1.blocks, 'quantum_whenEntanglementStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId1]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
+                }
+            }
+        }
+
+        scripts = BlocksRuntimeCache.getScripts(original2.blocks, 'quantum_whenEntanglementStart');
+        if (scripts.length >= 1) {
+            for (let j = 0; j < scripts.length; j++) {
+                for (const poss of this.possibilityTree[originalId2]) {
+                    this.pushThread(scripts[j].blockId, poss, true);
+                }
+            }
+        }
     }
 
     entanglementNClones(args, util) {
@@ -202,6 +388,7 @@ class QuantumBlocks {
                 }
             }
         }
+        return tree[tree.length - 1];
     }
 
     chooseOriginalFromTreeConditioned(id, variables, tree) {
@@ -237,31 +424,74 @@ class QuantumBlocks {
     }
 
 
-    createPossibilities(target, nClones, variable) {
+    createPossibilities(target, nClones, variable, isPredefined, list) {
         let originalId = target.originalId;
         let tree = [...this.possibilityTree[originalId]];
         let originalTarget = this.getOriginal(originalId);
         target._isInSuperPositionList[variable] = true;
-        for (const element of tree) {
-            this.changeSuperposeState(element, variable);
-            this.onTreePopThis(element);
-            let ThisClone = [];
-            for (let i = 0; i < nClones; i++) {
-                let clone = element.makeClone();
-                if (clone) {
-                    clone.isClone = true;
-                    clone.originalId = element.originalId;
-                    clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
-                    this.runtime.addTarget(clone);
-                    clone.goBehindOther(element);
-                    ThisClone.push(clone);
-                    this.possibilityTree[originalId].push(clone);
+        if (!isPredefined) {
+            for (const element of tree) {
+                this.changeSuperposeState(element, variable);
+                this.onTreePopThis(element);
+                let ThisClone = [];
+                for (let i = 0; i < nClones; i++) {
+                    let clone = element.makeClone();
+                    if (clone) {
+                        clone.isClone = true;
+                        clone.originalId = element.originalId;
+                        clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                        this.runtime.addTarget(clone);
+                        clone.goBehindOther(element);
+                        ThisClone.push(clone);
+                        this.possibilityTree[originalId].push(clone);
+                    }
+
                 }
 
+                this.changeVariable(element, variable, nClones, ThisClone);
             }
+        } else if (isPredefined && list){
+            for (const element of tree) {
+                this.changeSuperposeState(element, variable);
+                this.onTreePopThis(element);
+                let ThisClone = [];
+                for (let i = 0; i < nClones; i++) {
+                    let clone = element.makeClone();
+                    if (clone) {
+                        clone.isClone = true;
+                        clone.originalId = element.originalId;
+                        clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                        this.runtime.addTarget(clone);
+                        clone.goBehindOther(element);
+                        ThisClone.push(clone);
+                        this.possibilityTree[originalId].push(clone);
+                    }
 
-            this.changeVariable(element, variable, nClones, ThisClone);
+                }
+                this.changeVariable(element, variable, nClones, ThisClone, list, true);
+            }
+        } else {
+            for (const element of tree) {
+                this.changeSuperposeState(element, variable);
+                this.onTreePopThis(element);
+                let ThisClone = [];
+                for (let i = 0; i < nClones; i++) {
+                    let clone = element.makeClone();
+                    if (clone) {
+                        clone.isClone = true;
+                        clone.originalId = element.originalId;
+                        clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                        this.runtime.addTarget(clone);
+                        clone.goBehindOther(element);
+                        ThisClone.push(clone);
+                        this.possibilityTree[originalId].push(clone);
+                    }
+
+                }
+                this.changeVariable(element, variable, nClones, ThisClone, list, false);
+            }
         }
+        
         let newOriginal = this.chooseOriginalFromTree(originalId);
         for (let i = 0; i < this.runtime.threads.length; i++) {
             let targetThread = this.runtime.threads[i].target;
@@ -287,31 +517,76 @@ class QuantumBlocks {
 
     }
 
-    createPossibilitiesConditioned(target, nClones, variable, conditionedTarget) {
+    createPossibilitiesConditioned(target, nClones, variable, conditionedTarget, isPredefined, list) {
         let originalId = target.originalId;
         let tree = [...this.possibilityTree[originalId]];
         let originalTarget = this.getOriginal(originalId);
         target._isInSuperPositionList[variable] = true;
-        for (const element of tree) {
-            this.changeSuperposeState(element, variable);
-            this.onTreePopThis(element);
-            let ThisClone = [];
-            for (let i = 0; i < nClones; i++) {
-                let clone = element.makeClone();
-                if (clone) {
-                    clone.isClone = true;
-                    clone.originalId = element.originalId;
-                    clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
-                    this.runtime.addTarget(clone);
-                    clone.goBehindOther(element);
-                    ThisClone.push(clone);
-                    this.possibilityTree[originalId].push(clone);
+        if (!isPredefined) {
+            for (const element of tree) {
+                this.changeSuperposeState(element, variable);
+                this.onTreePopThis(element);
+                let ThisClone = [];
+                for (let i = 0; i < nClones; i++) {
+                    let clone = element.makeClone();
+                    if (clone) {
+                        clone.isClone = true;
+                        clone.originalId = element.originalId;
+                        clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                        this.runtime.addTarget(clone);
+                        clone.goBehindOther(element);
+                        ThisClone.push(clone);
+                        this.possibilityTree[originalId].push(clone);
+                    }
+
                 }
 
+                this.changeVariable(element, variable, nClones, ThisClone);
             }
+        } else if (isPredefined && list){
+            for (const element of tree) {
+                this.changeSuperposeState(element, variable);
+                this.onTreePopThis(element);
+                let ThisClone = [];
+                for (let i = 0; i < nClones; i++) {
+                    let clone = element.makeClone();
+                    if (clone) {
+                        clone.isClone = true;
+                        clone.originalId = element.originalId;
+                        clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                        this.runtime.addTarget(clone);
+                        clone.goBehindOther(element);
+                        ThisClone.push(clone);
+                        this.possibilityTree[originalId].push(clone);
+                    }
 
-            this.changeVariable(element, variable, nClones, ThisClone);
+                }
+
+                this.changeVariable(element, variable, nClones, ThisClone, list, true);
+            }
+        } else {
+            for (const element of tree) {
+                this.changeSuperposeState(element, variable);
+                this.onTreePopThis(element);
+                let ThisClone = [];
+                for (let i = 0; i < nClones; i++) {
+                    let clone = element.makeClone();
+                    if (clone) {
+                        clone.isClone = true;
+                        clone.originalId = element.originalId;
+                        clone._isInSuperPositionList = Object.assign({}, element._isInSuperPositionList);
+                        this.runtime.addTarget(clone);
+                        clone.goBehindOther(element);
+                        ThisClone.push(clone);
+                        this.possibilityTree[originalId].push(clone);
+                    }
+
+                }
+
+                this.changeVariable(element, variable, nClones, ThisClone, list, false);
+            }
         }
+
         let newOriginal = this.searchInTreeForSameProperties(conditionedTarget, [variable], this.possibilityTree[originalId]);
         for (let i = 0; i < this.runtime.threads.length; i++) {
             let targetThread = this.runtime.threads[i].target;
@@ -434,132 +709,251 @@ class QuantumBlocks {
         }
     }
 
-    changeVariable(target, variable, nClones, tree) {
-        console.log(target);
-        switch (variable) {
-            case "_position_":
+    changeVariable(target, variable, nClones, tree, list, hasNCloneDefined) {
+        if (list && hasNCloneDefined) {
+            console.log("11")
+            switch (variable) {
+                case "_position_":
+    
+                    const MAX_CLONES = 300;
+    
+                    let numClones = Math.min(nClones, MAX_CLONES);
+    
+                    let radius = numClones * 10;
+                    radius = Math.min(radius, 200);
+    
+                    let angle = list[0];
+                    let distance = radius;
+    
+                    let posx = 0;
+                    let posy = 0;
+    
+                    for (let i = 1; i < nClones; i++) {
+                        angle = list[i % list.length] ; // Ángulo aleatorio
+                        distance = radius;   // Distancia aleatoria dentro del radio
+    
+                        posx = target.x + distance * Math.cos(angle);
+                        posy = target.y + distance * Math.sin(angle);
+    
+                        tree[i].setXY(posx, posy);
+                    }
+    
+                    break;
+                case "_direction_":
 
-                const MAX_CLONES = 300;
+                    for (let i = 0; i < nClones; i++) {
+                        tree[i].setDirection(list[i % list.length]);
+                    }
+    
+                    break;
+                case "_color_":
+                    
+                    for (let i = 0; i < nClones; i++) {
+                        tree[i].setEffect("color", list[i % list.length]);
+                    }
+    
+                    break;
+                case "_costume_":
+                    let totalNOfCostume = target.sprite.costumes_.length;
+    
+                    for (let i = 0; i < nClones; i++) {
+                        tree[i].setCostume((list[i % list.length] + i) % totalNOfCostume);
+                    }
+                    break;
+                case "_size_":
+                    
+                    for (let i = 0; i < nClones; i++) {
+                        tree[i].setSize(list[i % list.length]);
+                    }
+                    break;
+    
+            }
+        } else if (list) {
+            console.log("22")
 
-                let numClones = Math.min(nClones, MAX_CLONES);
+            switch (variable) {
+                case "_position_":
+    
+                    const MAX_CLONES = 300;
+    
+                    let numClones = Math.min(nClones, MAX_CLONES);
+    
+                    let radius = numClones * 10;
+                    radius = Math.min(radius, 200);
+    
+                    let angle = list[0];
+                    let distance = radius;
+    
+                    let posx = 0;
+                    let posy = 0;
+    
+                    for (let i = 1; i < list.length; i++) {
+                        angle = list[i]; // Ángulo aleatorio
+                        distance = radius;   // Distancia aleatoria dentro del radio
+    
+                        posx = target.x + distance * Math.cos(angle);
+                        posy = target.y + distance * Math.sin(angle);
+    
+                        tree[i].setXY(posx, posy);
+                    }
+    
+                    break;
+                case "_direction_":
 
-                let radius = numClones * 10;
-                radius = Math.min(radius, 200);
-
-                let angle = Math.random() * 2 * Math.PI;
-                let distance = Math.random() * radius;
-
-                let posx = 0;
-                let posy = 0;
-
-                for (const clone of tree) {
-                    // Posición aleatoria para cada clon dentro del mismo radio
-                    angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
-                    distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
-
-                    posx = target.x + distance * Math.cos(angle);
-                    posy = target.y + distance * Math.sin(angle);
-
-                    clone.setXY(posx, posy);
-                }
-
-                break;
-            case "_direction_":
-                let originalDirection = target.direction;
-                let totalEntities = nClones;
-                let increment = 360 / totalEntities;
-                let directions = [];
-
-                for (let i = 0; i < totalEntities; i++) {
-                    let newDirection = (originalDirection + i * increment) % 360;
-                    directions.push(newDirection);
-                }
-
-                for (let i = directions.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [directions[i], directions[j]] = [directions[j], directions[i]];
-                }
-
-                for (let i = 0; i < tree.length; i++) {
-                    tree[i].setDirection(directions[i]);
-                }
-
-                break;
-            case "_color_":
-                let originalColor = 0;
-                let totalEntitiesColor = nClones;
-                let incrementColor = 200 / totalEntitiesColor;
-                let colors = [];
-
-                for (let i = 0; i < totalEntitiesColor; i++) {
-                    let newColor = originalColor + i * incrementColor;
-                    colors.push(newColor);
-                }
-
-                for (let i = colors.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [colors[i], colors[j]] = [colors[j], colors[i]];
-                }
-
-                for (let i = 0; i < tree.length; i++) {
-                    tree[i].setEffect("color", colors[i]);
-                }
-
-                break;
-            case "_costume_":
-                let currentCostume = target.currentCostume;
-                let totalNOfCostume = target.sprite.costumes_.length;
-                let totalEntitiesCostume = nClones;
-                let costumes = [];
-
-                for (let i = 0; i < totalEntitiesCostume; i++) {
-                    let newCostume = (currentCostume + i) % totalNOfCostume;
-                    costumes.push(newCostume);
-                }
-
-                for (let i = costumes.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [costumes[i], costumes[j]] = [costumes[j], costumes[i]];
-                }
-
-                for (let i = 0; i < tree.length; i++) {
-                    tree[i].setCostume(costumes[i]);
-                }
-                break;
-            case "_size_":
-                let initialSize = target.size; 
-                let totalEntitiesSize = nClones; 
-                let sizes = [];
-
-                let minSize = initialSize * 0.5; 
-                let maxSize = initialSize * 1.5; 
-
-                for (let i = 0; i < totalEntitiesSize; i++) {
-                    let progress = i / (totalEntitiesSize - 1); 
-                    let newSize = maxSize - progress * (maxSize - minSize); 
-                    sizes.push(newSize);
-                }
-
-                for (let i = 0; i < tree.length; i++) {
-                    tree[i].setSize(sizes[i]);
-                }
-                break;
-
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setDirection(list[i]);
+                    }
+    
+                    break;
+                case "_color_":
+                    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setEffect("color", list[i]);
+                    }
+    
+                    break;
+                case "_costume_":
+                    let totalNOfCostume = target.sprite.costumes_.length;
+    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setCostume((list[i] + i) % totalNOfCostume);
+                    }
+                    break;
+                case "_size_":
+                    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setSize(list[i]);
+                    }
+                    break;
+    
+            }
+        } else {
+            console.log("33")
+            switch (variable) {
+                case "_position_":
+    
+                    const MAX_CLONES = 300;
+    
+                    let numClones = Math.min(nClones, MAX_CLONES);
+    
+                    let radius = numClones * 10;
+                    radius = Math.min(radius, 200);
+    
+                    let angle = Math.random() * 2 * Math.PI;
+                    let distance = Math.random() * radius;
+    
+                    let posx = 0;
+                    let posy = 0;
+    
+                    for (const clone of tree) {
+                        // Posición aleatoria para cada clon dentro del mismo radio
+                        angle = Math.random() * 2 * Math.PI; // Ángulo aleatorio
+                        distance = Math.random() * radius;   // Distancia aleatoria dentro del radio
+    
+                        posx = target.x + distance * Math.cos(angle);
+                        posy = target.y + distance * Math.sin(angle);
+    
+                        clone.setXY(posx, posy);
+                    }
+    
+                    break;
+                case "_direction_":
+                    let originalDirection = target.direction;
+                    let totalEntities = nClones;
+                    let increment = 360 / totalEntities;
+                    let directions = [];
+    
+                    for (let i = 0; i < totalEntities; i++) {
+                        let newDirection = (originalDirection + i * increment) % 360;
+                        directions.push(newDirection);
+                    }
+    
+                    for (let i = directions.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [directions[i], directions[j]] = [directions[j], directions[i]];
+                    }
+    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setDirection(directions[i]);
+                    }
+    
+                    break;
+                case "_color_":
+                    let originalColor = 0;
+                    let totalEntitiesColor = nClones;
+                    let incrementColor = 200 / totalEntitiesColor;
+                    let colors = [];
+    
+                    for (let i = 0; i < totalEntitiesColor; i++) {
+                        let newColor = originalColor + i * incrementColor;
+                        colors.push(newColor);
+                    }
+    
+                    for (let i = colors.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [colors[i], colors[j]] = [colors[j], colors[i]];
+                    }
+    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setEffect("color", colors[i]);
+                    }
+    
+                    break;
+                case "_costume_":
+                    let currentCostume = target.currentCostume;
+                    let totalNOfCostume = target.sprite.costumes_.length;
+                    let totalEntitiesCostume = nClones;
+                    let costumes = [];
+    
+                    for (let i = 0; i < totalEntitiesCostume; i++) {
+                        let newCostume = (currentCostume + i) % totalNOfCostume;
+                        costumes.push(newCostume);
+                    }
+    
+                    for (let i = costumes.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [costumes[i], costumes[j]] = [costumes[j], costumes[i]];
+                    }
+    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setCostume(costumes[i]);
+                    }
+                    break;
+                case "_size_":
+                    let initialSize = target.size; 
+                    let totalEntitiesSize = nClones; 
+                    let sizes = [];
+    
+                    let minSize = initialSize * 0.5; 
+                    let maxSize = initialSize * 1.5; 
+    
+                    for (let i = 0; i < totalEntitiesSize; i++) {
+                        let progress = i / (totalEntitiesSize - 1); 
+                        let newSize = maxSize - progress * (maxSize - minSize); 
+                        sizes.push(newSize);
+                    }
+    
+                    for (let i = 0; i < tree.length; i++) {
+                        tree[i].setSize(sizes[i]);
+                    }
+                    break;
+    
+            }
         }
+        
     }
 
     superpositions(args, util) {
-        /*util.target.isOriginal = true;
-        if (!util.target._isInSuperpositionVariable[args.VARIABLES]) {
-            util.target.superposeWithList(parseInt(args.N_CLONES, 10), args.VARIABLES, this.convertToList(args.LISTA));
-        }*/
+        console.log(args)
+        this.collectPossibiltyTreeGarbage();
+        util.target.isOriginal = true;
         if (!this.isInSuperPosition(util.target)) {
             this.possibilityTree[util.target.originalId] = [util.target];
 
-        } else if (!this.isSuperpose(util.target, args.VARIABLES)) {
-
         }
-
+        if (!this.isSuperpose(util.target, args.VARIABLES)) {
+            this.createPossibilities(util.target, parseInt(args.N_CLONES, 10), args.VARIABLES, true, this.convertToList(args.LISTA));
+        }
 
         let increment = 0;
 
@@ -574,7 +968,6 @@ class QuantumBlocks {
                 if (increment > 10000000) increment = 0;
             }, 100);
         }
-
 
     }
 

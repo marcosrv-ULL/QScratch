@@ -31,7 +31,7 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             </value>
             <value name="LISTA">
                 <shadow type="math_number">
-                    <field name="NUM">lista</field>
+                    <field name="NUM">list</field>
                 </shadow>
             </value>
         </block>
@@ -47,7 +47,7 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             </value>
             <value name="LISTA">
                 <shadow type="math_number">
-                    <field name="NUM">lista</field>
+                    <field name="NUM">list</field>
                 </shadow>
             </value>
         </block>
@@ -61,7 +61,7 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             </value>
             <value name="TARGET">
                 <shadow type="text">
-                    <field name="TEXT">Nombre</field>
+                    <field name="TEXT">name</field>
                 </shadow>
             </value>
             <value name="N_CLONES">
@@ -77,12 +77,12 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             </value>
             <value name="TARGET">
                 <shadow type="text">
-                    <field name="TEXT">Nombre</field>
+                    <field name="TEXT">name</field>
                 </shadow>
             </value>
             <value name="LISTA1">
                 <shadow type="math_number">
-                    <field name="NUM">rango1</field>
+                    <field name="NUM">list</field>
                 </shadow>
             </value>
         </block>
@@ -93,17 +93,17 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
             </value>
             <value name="TARGET">
                 <shadow type="text">
-                    <field name="TEXT">Nombre</field>
+                    <field name="TEXT">name</field>
                 </shadow>
             </value>
             <value name="LISTA1">
                 <shadow type="math_number">
-                    <field name="NUM">rango1</field>
+                    <field name="NUM">1</field>
                 </shadow>
             </value>
             <value name="LISTA2">
                 <shadow type="math_number">
-                    <field name="NUM">rango2</field>
+                    <field name="NUM">list</field>
                 </shadow>
             </value>
         </block>
