@@ -32,6 +32,7 @@ goog.provide('Blockly.ScratchBlocks.VerticalExtensions');
 goog.require('Blockly.Colours');
 goog.require('Blockly.constants');
 
+console.log('%c [MRODRIVE] -> MIS BLOQUES LOCALES CARGADOS ', 'background: #222; color: #bada55; font-size: 20px');
 
 /**
  * Helper function that generates an extension based on a category name.
@@ -224,7 +225,7 @@ Blockly.ScratchBlocks.VerticalExtensions.SCRATCH_EXTENSION = function() {
 Blockly.ScratchBlocks.VerticalExtensions.registerAll = function() {
   var categoryNames =
       ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
-        'sensing', 'pen', 'operators', 'more', 'quantum'];
+        'sensing', 'pen', 'operators', 'more'];
   // Register functions for all category colours.
   for (var i = 0; i < categoryNames.length; i++) {
     var name = categoryNames[i];
@@ -261,6 +262,158 @@ Blockly.ScratchBlocks.VerticalExtensions.registerAll = function() {
   // Extension blocks have slightly different block rendering.
   Blockly.Extensions.register('scratch_extension',
       Blockly.ScratchBlocks.VerticalExtensions.SCRATCH_EXTENSION);
+};
+
+// ... (código existente en vertical_extensions.js) ...
+
+// --- PEGA AQUÍ TUS BLOQUES QUANTUM ---
+
+// Definimos el color directamente
+const QUANTUM_COLOR = '#5C068C';
+
+Blockly.Blocks['quantum_whenSuperpositionStart'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "when superposition started",
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_hat"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_superposition_no_list'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "superpose variable: %1 possibilities: %2",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "VARIABLE"
+        },
+        {
+          "type": "input_value",
+          "name": "N_CLONES"
+        }
+      ],
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_superposition_only_list'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "superpose variable: %1 list: %2",
+      "args0": [
+        { "type": "input_value", "name": "VARIABLE" },
+        { "type": "input_value", "name": "LISTA" }
+      ],
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_superpositions'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "superpositions variable: %1 possibilities: %2 list: %3",
+      "args0": [
+        { "type": "input_value", "name": "VARIABLE" },
+        { "type": "input_value", "name": "N_CLONES" },
+        { "type": "input_value", "name": "LISTA" }
+      ],
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_whenEntanglementStart'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "when entanglement started",
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_hat"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_entanglement_no_list'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "entangle variable: %1 target: %2 possibilities: %3",
+      "args0": [
+        { "type": "input_value", "name": "VARIABLE" },
+        { "type": "input_value", "name": "TARGET" },
+        { "type": "input_value", "name": "N_CLONES" }
+      ],
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_entanglement_only_list'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "entangle variable: %1 target: %2 list: %3",
+      "args0": [
+        { "type": "input_value", "name": "VARIABLE" },
+        { "type": "input_value", "name": "TARGET" },
+        { "type": "input_value", "name": "LISTA1" }
+      ],
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_entanglement'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "entangle variable: %1 target: %2 possibilities: %3 list: %4",
+      "args0": [
+        { "type": "input_value", "name": "VARIABLE" },
+        { "type": "input_value", "name": "TARGET" },
+        { "type": "input_value", "name": "LISTA1" },
+        { "type": "input_value", "name": "LISTA2" }
+      ],
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_whenMeasured'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "when measured",
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_hat"]
+    });
+  }
+};
+
+Blockly.Blocks['quantum_measure'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": "measure",
+      "category": "Quantum",
+      "colour": QUANTUM_COLOR,
+      "extensions": ["shape_statement"]
+    });
+  }
 };
 
 Blockly.ScratchBlocks.VerticalExtensions.registerAll();

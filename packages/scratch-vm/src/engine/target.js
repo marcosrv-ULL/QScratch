@@ -8,6 +8,7 @@ const {Map} = require('immutable');
 const log = require('../util/log');
 const StringUtil = require('../util/string-util');
 const VariableUtil = require('../util/variable-util');
+const BlocksRuntimeCache = require('./blocks-runtime-cache');
 
 /**
  * @file
@@ -22,8 +23,13 @@ class Target extends EventEmitter {
      * @param {?Blocks} blocks Blocks instance for the blocks owned by this target.
      * @class
      */
+
+    static possibilityTree = {};
+    static isInSuperPositionList = {};
+    static entanglementLinks = {};
     constructor (runtime, blocks) {
         super();
+        
 
         if (!blocks) {
             blocks = new Blocks(runtime);
@@ -70,6 +76,28 @@ class Target extends EventEmitter {
          * @type {Object.<string, *>}
          */
         this._edgeActivatedHatValues = {};
+
+        this.isGarbage = false;
+
+        this._clones = [];
+        this.hasNoClone = true;
+        this.originalId = this.id;
+        
+        this._isInSuperPositionList = {
+            '_position_': false,
+            '_direction_': false,
+            '_color_': false,
+            '_size_': false,
+            '_costume_': false
+        };
+
+        this._entanglementLinks = {
+            '_position_': [],
+            '_direction_': [],
+            '_color_': [],
+            '_size_': [],
+            '_costume_': []
+        }
     }
 
     /**
@@ -159,6 +187,54 @@ class Target extends EventEmitter {
             return broadcastMsg;
         }
     }
+
+    // --- NUEVOS MÉTODOS ---
+    isInSuperPosition() {
+        return Object.values(this._isInSuperPositionList).some(value => value === true);
+    }
+
+    isSuperpose(variable) {
+        // Nota: Asegúrate de que Target.isInSuperPositionList esté sincronizado o usa this._isInSuperPositionList
+        // En tu targetold.js usabas Target.isInSuperPositionList estático, pero aquí parece referirse a la instancia.
+        // Si la lógica es global por ID:
+        return Target.isInSuperPositionList[this.originalId] ? Target.isInSuperPositionList[this.originalId][variable] : false; 
+    }
+
+    changeSuperposeState(variable) {
+        if (!Target.isInSuperPositionList[this.originalId]) {
+             Target.isInSuperPositionList[this.originalId] = {};
+        }
+        Target.isInSuperPositionList[this.originalId][variable] = true;
+    }
+
+    measure() {
+        if (this.isOriginal) {
+            this._isInSuperPositionList = {
+                '_position_': false,
+                '_direction_': false,
+                '_color_': false,
+                '_size_': false,
+                '_costume_': false
+            }
+            
+            this._entanglementLinks = {
+                '_position_': [],
+                '_direction_': [],
+                '_color_': [],
+                '_size_': [],
+                '_costume_': []
+            }
+
+            // Nota: setEffect debe existir en RenderedTarget (que hereda de Target).
+            // Si Target es la clase base pura, asegúrate de que esto no rompa tests unitarios sin renderer.
+            if (this.setEffect) { 
+                this.setEffect("ghost", 0);
+            }
+        } else {
+            this.isGarbage = true;
+        }
+    }
+    // ----------------------
 
     /**
      * Look up a broadcast message with the given name and return the variable
@@ -486,6 +562,9 @@ class Target extends EventEmitter {
 
         if (this.runtime) {
             this.runtime.removeExecutable(this);
+            // --- AGREGAR ESTO ---
+            this.measure(); // Limpiar estado cuántico al eliminar
+            // --------------------
         }
     }
 

@@ -10,6 +10,7 @@ import ReactDomClient from 'react-dom/client';
 import AppStateHOC from '../lib/app-state-hoc.jsx';
 import BrowserModalComponent from '../components/browser-modal/browser-modal.jsx';
 import supportedBrowser from '../lib/supported-browser';
+import '../lib/quantum_messages.js'; // <--- Agrega esto
 
 import styles from './index.css';
 

@@ -259,8 +259,6 @@ Blockly.OUTPUT_SHAPE_SQUARE = 3;
  * @const
  */
 Blockly.Categories = {
-  "dialogs": "dialogs",
-  "quantum": "quantum",
   "motion": "motion",
   "looks": "looks",
   "sound": "sounds",
@@ -386,4 +384,13 @@ Blockly.PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
 Blockly.StatusButtonState = {
   "READY": "ready",
   "NOT_READY": "not ready",
+};
+
+/**
+ * ENUM defining supported themes.
+ * @enum {string}
+ */
+Blockly.Themes = {
+  CLASSIC: "classic",
+  CAT_BLOCKS: "catblocks"
 };

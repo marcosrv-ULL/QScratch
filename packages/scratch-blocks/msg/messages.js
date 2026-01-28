@@ -33,51 +33,6 @@ goog.provide('Blockly.Msg.en');
 
 goog.require('Blockly.Msg');
 
-// Dialogs blocks
-Blockly.Msg.DIALOGS_ALERT = 'alert %1';
-Blockly.Msg.TUTORIALMOD_DIALOGS_CONFIRM = 'Confirm %1';
-Blockly.Msg.DIALOGS_PROMPT = 'prompt %1';
-Blockly.Msg.DIALOGS_WHILECONFIRMED = 'While Confirm %1';
-Blockly.Msg.DIALOGS_RANDOMCHOICE = 'random Choice';
-
-// Quantum Blocks
-
-Blockly.Msg.QUANTUM_MEASURE = 'measure';
-Blockly.Msg.QUANTUM_WHENMEASURED = 'when measured'
-Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART = 'when superposition started'
-Blockly.Msg.QUANTUM_WHENENTANGLEMENTSTART = 'when entanglement started'
-Blockly.Msg.QUANTUM_SUPERPOSITION = 'superposition variable %1 nº clones %2 lista %3';
-Blockly.Msg.QUANTUM_SUPERPOSITION1 = 'superpose %1 possibilities: %2 list: %3';
-Blockly.Msg.QUANTUM_SUPERPOSITION_NO_LIST = 'superpose %1 possibilities: %2 ';
-Blockly.Msg.QUANTUM_SUPERPOSITION_ONLY_LIST = 'superpose %1 list: %2 ';
-Blockly.Msg.QUANTUM_ENTANGLEMENT = 'entangle %1 with %2 possibilities: %3 list: %4';
-Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST = 'entangle %1 with %2 possibilities: %3';
-Blockly.Msg.QUANTUM_ENTANGLEMENT_ONLY_LIST = 'entangle %1 with %2 list: %3';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION = 'position';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION = 'direction';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR = 'colour';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME = 'costume';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_SIZE = 'size'
-
-/*
-Blockly.Msg.QUANTUM_MEASURE = 'medir';
-Blockly.Msg.QUANTUM_WHENMEASURED = 'cuando se mida'
-Blockly.Msg.QUANTUM_WHENSUPERPOSITIONSTART = 'cuando empiece superposición'
-Blockly.Msg.QUANTUM_WHENENTANGLEMENTSTART = 'cuando empiece entrelazamiento'
-Blockly.Msg.QUANTUM_SUPERPOSITION = 'superposition variable %1 nº clones %2 lista %3';
-Blockly.Msg.QUANTUM_SUPERPOSITION1 = 'superponer la %1 posibilidades: %2 rango: %3';
-Blockly.Msg.QUANTUM_SUPERPOSITION_NO_LIST = 'superponer la %1 posibilidades: %2 ';
-Blockly.Msg.QUANTUM_SUPERPOSITION_ONLY_LIST = 'superponer la %1 rango: %2 ';
-Blockly.Msg.QUANTUM_ENTANGLEMENT = 'entrelazar %1 de %2 según %3 y %4';
-Blockly.Msg.QUANTUM_ENTANGLEMENT_NO_LIST = 'entrelazar %1 de %2 en %3 posibilidades';
-Blockly.Msg.QUANTUM_ENTANGLEMENT_ONLY_LIST = 'entrelazar %1 de %2 rango %3';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_POSITION = 'posición';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_DIRECTION = 'dirección';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_COLOR = 'color';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_COSTUME = 'disfraz';
-Blockly.Msg.QUANTUM_SUPERPOSITION1_SIZE = 'tamaño'*/
-
-
 // Control blocks
 Blockly.Msg.CONTROL_FOREVER = 'forever';
 Blockly.Msg.CONTROL_REPEAT = 'repeat %1';
@@ -307,6 +262,7 @@ Blockly.Msg.SENSING_CURRENT_HOUR = 'hour';
 Blockly.Msg.SENSING_CURRENT_MINUTE = 'minute';
 Blockly.Msg.SENSING_CURRENT_SECOND = 'second';
 Blockly.Msg.SENSING_DAYSSINCE2000 = 'days since 2000';
+Blockly.Msg.SENSING_ONLINE = 'online?';
 Blockly.Msg.SENSING_USERNAME = 'username';
 Blockly.Msg.SENSING_USERID = 'user id';
 
@@ -325,8 +281,6 @@ Blockly.Msg.SOUND_VOLUME = 'volume';
 Blockly.Msg.SOUND_RECORD = 'record...';
 
 // Category labels
-Blockly.Msg.CATEGORY_DIALOGS = 'Dialogs';
-Blockly.Msg.CATEGORY_QUANTUM = 'Quantum';
 Blockly.Msg.CATEGORY_MOTION = 'Motion';
 Blockly.Msg.CATEGORY_LOOKS = 'Looks';
 Blockly.Msg.CATEGORY_SOUND = 'Sound';

@@ -37,6 +37,7 @@ const uid = require('../util/uid');
  */
 
 const defaultBlockPackages = {
+    scratch3_quantum: require('../blocks/scratch3_quantum'),
     scratch3_control: require('../blocks/scratch3_control'),
     scratch3_event: require('../blocks/scratch3_event'),
     scratch3_looks: require('../blocks/scratch3_looks'),
@@ -156,7 +157,7 @@ const cloudDataManager = () => {
         removeCloudVariable,
         hasCloudVariables
     };
-};
+}; 
 
 /**
  * Numeric ID for Runtime._step in Profiler instances.
@@ -337,6 +338,7 @@ class Runtime extends EventEmitter {
 
         // Register all given block packages.
         this._registerBlockPackages();
+    
 
         // Register and initialize "IO devices", containers for processing
         // I/O related data.
@@ -1840,6 +1842,16 @@ class Runtime extends EventEmitter {
         }
     }
 
+    allScriptsByOpcodeDoForSpecificTargets(opcode, f, targets) {
+        for (let t = targets.length - 1; t >= 0; t--) {
+            const target = targets[t];
+            const scripts = BlocksRuntimeCache.getScripts(target.blocks, opcode);
+            for (let j = 0; j < scripts.length; j++) {
+                f(scripts[j], target);
+            }
+        }
+    }
+
     /**
      * Start all relevant hats.
      * @param {!string} requestedHatOpcode Opcode of hats to start.
@@ -2085,6 +2097,13 @@ class Runtime extends EventEmitter {
      * Stop "everything."
      */
     stopAll () {
+        // --- INICIO MODIFICACIÓN QUANTUM ---
+        if(this.effectGhost) {
+            clearInterval(this.effectGhost);
+            this.effectGhost = null;
+        }
+        // --- FIN MODIFICACIÓN QUANTUM ---
+
         // Emit stop event to allow blocks to clean up any state.
         this.emit(Runtime.PROJECT_STOP_ALL);
 
@@ -2096,6 +2115,12 @@ class Runtime extends EventEmitter {
                 !this.targets[i].isOriginal) {
                 this.targets[i].dispose();
             } else {
+                // --- INICIO MODIFICACIÓN QUANTUM ---
+                // Si el objetivo está en superposición, forzamos la medición antes de limpiar
+                if (typeof this.targets[i].isInSuperPosition === 'function' && this.targets[i].isInSuperPosition()) {
+                    this.targets[i].measure(); 
+                }
+                // --- FIN MODIFICACIÓN QUANTUM ---
                 newTargets.push(this.targets[i]);
             }
         }

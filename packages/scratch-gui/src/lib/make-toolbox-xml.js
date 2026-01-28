@@ -5,7 +5,138 @@ const categorySeparator = '<sep gap="36"/>';
 
 const blockSeparator = '<sep gap="36"/>'; // At default scale, about 28px
 
+/* eslint-disable no-unused-vars */
+const quantum = function (isInitialSetup, isStage, targetId, colors) {
+    // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
+    return `
+    <category name="%{BKY_CATEGORY_QUANTUM}" id="quantum" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+            <block type="quantum_whenSuperpositionStart"/>
+        <block type="quantum_superposition_no_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="N_CLONES">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="quantum_superposition_only_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="LISTA">
+                <shadow type="math_number">
+                    <field name="NUM">list</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="quantum_superpositions">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="N_CLONES">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="LISTA">
+                <shadow type="math_number">
+                    <field name="NUM">list</field>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="quantum_whenEntanglementStart"/>
+        
+        <block type="quantum_entanglement_no_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="TARGET">
+                <shadow type="text">
+                    <field name="TEXT">name</field>
+                </shadow>
+            </value>
+            <value name="N_CLONES">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="quantum_entanglement_only_list">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="TARGET">
+                <shadow type="text">
+                    <field name="TEXT">name</field>
+                </shadow>
+            </value>
+            <value name="LISTA1">
+                <shadow type="math_number">
+                    <field name="NUM">list</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="quantum_entanglement">
+            <value name="VARIABLE">
+                <shadow type="motion_glideto_menu">
+                </shadow>
+            </value>
+            <value name="TARGET">
+                <shadow type="text">
+                    <field name="TEXT">name</field>
+                </shadow>
+            </value>
+            <value name="LISTA1">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="LISTA2">
+                <shadow type="math_number">
+                    <field name="NUM">list</field>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="quantum_whenMeasured"/>
+        <block type="quantum_measure">
+            
+        </block>
+        ${categorySeparator}
+    </category>
+    `;
+};
 
+/*const quantum = function (isInitialSetup, isStage, targetId, colors) {
+    // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
+    return `
+    <category name="%{BKY_CATEGORY_QUANTUM}" id="quantum" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+        <block type="quantum_superposition">
+            <value name="N_CLONES">
+                <shadow type="math_number">
+                    <field name="NUM">numero de clones</field>
+                </shadow>
+            </value>
+            <value name="VARIABLE">
+                <shadow type="math_number">
+                    <field name="NUM">variable</field>
+                </shadow>
+            </value>
+        </block>
+        ${categorySeparator}
+    </category>
+    `;
+};*/
+
+/* eslint-disable no-unused-vars */
 const motion = function (isInitialSetup, isStage, targetId, colors) {
     const stageSelected = ScratchBlocks.ScratchMsgs.translate(
         'MOTION_STAGE_SELECTED',
@@ -513,7 +644,6 @@ const sensing = function (isInitialSetup, isStage, targetId, colors) {
         <block id="current" type="sensing_current"/>
         <block type="sensing_dayssince2000"/>
         ${blockSeparator}
-        <block id="online" type="sensing_online" />
         <block type="sensing_username"/>
         ${categorySeparator}
     </category>
@@ -737,7 +867,7 @@ const myBlocks = function (isInitialSetup, isStage, targetId, colors) {
     </category>
     `;
 };
-
+/* eslint-enable no-unused-vars */
 
 const xmlOpen = '<xml style="display: none">';
 const xmlClose = '</xml>';
@@ -755,7 +885,7 @@ const xmlClose = '</xml>';
  * @param {?string} costumeName - The name of the default selected costume dropdown.
  * @param {?string} backdropName - The name of the default selected backdrop dropdown.
  * @param {?string} soundName -  The name of the default selected sound dropdown.
- * @param {?object} colors - The colors for the color mode.
+ * @param {?object} colors - The colors for the theme.
  * @returns {string} - a ScratchBlocks-style XML document for the contents of the toolbox.
  */
 const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categoriesXML = [],
@@ -777,6 +907,7 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
         }
         // return `undefined`
     };
+    const quantumXML = moveCategory('quantum') || quantum(isInitialSetup, isStage, targetId, colors.quantum);
     const motionXML = moveCategory('motion') || motion(isInitialSetup, isStage, targetId, colors.motion);
     const looksXML = moveCategory('looks') ||
         looks(isInitialSetup, isStage, targetId, costumeName, backdropName, colors.looks);
@@ -790,6 +921,7 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
 
     const everything = [
         xmlOpen,
+        quantumXML, gap,
         motionXML, gap,
         looksXML, gap,
         soundXML, gap,

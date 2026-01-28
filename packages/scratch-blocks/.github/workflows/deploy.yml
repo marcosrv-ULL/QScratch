@@ -13,16 +13,16 @@ jobs:
             for F in chrome chromium chromedriver; do
               which $F && $F --version || echo Not found: $F
             done
-        - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+        - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         - name: Check Python version
           run: python --version
         - name: Setup Java
-          uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3
+          uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5
           with:
             distribution: 'temurin'
             java-version: 17
         - name: Setup Node
-          uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
+          uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
           with:
             node-version-file: '.nvmrc'
         - name: Install Node Dependencies

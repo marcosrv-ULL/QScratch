@@ -1,4 +1,10 @@
 const blockColors = {
+    quantum: {
+        primary: "#5C068C",   
+        secondary: "#7b61ff",  
+        tertiary: "#1c1f26",   
+        quaternary: "#e6e6e6" 
+    },
     motion: {
         primary: '#4C97FF',
         secondary: '#4280D7',
