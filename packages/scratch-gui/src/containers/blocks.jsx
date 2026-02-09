@@ -93,7 +93,6 @@ class Blocks extends React.Component {
         this.toolboxUpdateQueue = [];
     }
     componentDidMount () {
-        defineQuantumBlocks(ScratchBlocks); // inyección
         this.ScratchBlocks = VMScratchBlocks(this.props.vm, this.props.useCatBlocks);
         this.ScratchBlocks.prompt = this.handlePromptStart;
         this.ScratchBlocks.statusButtonCallback = this.handleConnectionModalStart;
@@ -154,6 +153,7 @@ class Blocks extends React.Component {
                 this.handleCategorySelected('faceSensing');
             });
         });
+        defineQuantumBlocks(this.ScratchBlocks); // in
     }
     shouldComponentUpdate (nextProps, nextState) {
         return (

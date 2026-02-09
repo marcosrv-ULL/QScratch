@@ -6,38 +6,35 @@ const categorySeparator = '<sep gap="36"/>';
 const blockSeparator = '<sep gap="36"/>'; // At default scale, about 28px
 
 /* eslint-disable no-unused-vars */
-const quantum = function (isInitialSetup, isStage, targetId, colors) {
-    // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
+const quantum = function (isInitialSetup, isStage, targetId) {
+    // Hardcoded colors to prevent crash if theme is missing
+    const color = "#5C068C"; 
+    const secondaryColor = "#46046e"; 
+
     return `
-    <category name="%{BKY_CATEGORY_QUANTUM}" id="quantum" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
-            <block type="quantum_whenSuperpositionStart"/>
+    <category name="Quantum" id="quantum" colour="${color}" secondaryColour="${secondaryColor}">
+        <block type="quantum_whenSuperpositionStart"/>
+        
         <block type="quantum_superposition_no_list">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
+            <field name="VARIABLES">_position_</field>
             <value name="N_CLONES">
                 <shadow type="math_number">
                     <field name="NUM">1</field>
                 </shadow>
             </value>
         </block>
+
         <block type="quantum_superposition_only_list">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
+            <field name="VARIABLES">_position_</field>
             <value name="LISTA">
                 <shadow type="math_number">
                     <field name="NUM">list</field>
                 </shadow>
             </value>
         </block>
+
         <block type="quantum_superpositions">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
+            <field name="VARIABLES">_position_</field>
             <value name="N_CLONES">
                 <shadow type="math_number">
                     <field name="NUM">1</field>
@@ -49,17 +46,16 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+
         ${blockSeparator}
+        
         <block type="quantum_whenEntanglementStart"/>
         
         <block type="quantum_entanglement_no_list">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
+            <field name="VARIABLES">_position_</field>
             <value name="TARGET">
                 <shadow type="text">
-                    <field name="TEXT">name</field>
+                    <field name="TEXT">Sprite2</field>
                 </shadow>
             </value>
             <value name="N_CLONES">
@@ -68,14 +64,12 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+
         <block type="quantum_entanglement_only_list">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
+            <field name="VARIABLES">_position_</field>
             <value name="TARGET">
                 <shadow type="text">
-                    <field name="TEXT">name</field>
+                    <field name="TEXT">Sprite2</field>
                 </shadow>
             </value>
             <value name="LISTA1">
@@ -84,14 +78,12 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+
         <block type="quantum_entanglement">
-            <value name="VARIABLE">
-                <shadow type="motion_glideto_menu">
-                </shadow>
-            </value>
+            <field name="VARIABLES">_position_</field>
             <value name="TARGET">
                 <shadow type="text">
-                    <field name="TEXT">name</field>
+                    <field name="TEXT">Sprite2</field>
                 </shadow>
             </value>
             <value name="LISTA1">
@@ -105,11 +97,13 @@ const quantum = function (isInitialSetup, isStage, targetId, colors) {
                 </shadow>
             </value>
         </block>
+
         ${blockSeparator}
+        
         <block type="quantum_whenMeasured"/>
-        <block type="quantum_measure">
-            
-        </block>
+        
+        <block type="quantum_measure"/>
+
         ${categorySeparator}
     </category>
     `;

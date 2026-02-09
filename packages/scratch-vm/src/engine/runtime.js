@@ -338,7 +338,7 @@ class Runtime extends EventEmitter {
 
         // Register all given block packages.
         this._registerBlockPackages();
-    
+        
 
         // Register and initialize "IO devices", containers for processing
         // I/O related data.
@@ -738,7 +738,7 @@ class Runtime extends EventEmitter {
      * @constant {number}
      */
     static get MAX_CLONES () {
-        return 300;
+        return 1024;
     }
 
     // -----------------------------------------------------------------------------

@@ -4,9 +4,6 @@ const execute = require('../engine/execute');
 const Thread = require('../engine/thread');
 const Target = require('../engine/target');
 const BlocksRuntimeCache = require('../engine/blocks-runtime-cache');
-const BlockType = require('../extension-support/block-type');
-const ArgumentType = require('../extension-support/argument-type');
-
 
 class QuantumBlocks {
 
@@ -38,10 +35,6 @@ class QuantumBlocks {
             quantum_measure: this.measure,
             quantum_whenSuperpositionStart: this.whenSuperpositionStart
         };
-    }
-
-    _getTargetMenu() {
-        return this.runtime.targets.length > 0 ? this.runtime.targets.filter(t => !t.isStage).map(t => t.getName()) : [''];
     }
 
     entanglementOnlyList(args, util) {
