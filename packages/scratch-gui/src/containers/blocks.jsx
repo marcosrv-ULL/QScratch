@@ -32,6 +32,8 @@ import {setConnectionModalExtensionId} from '../reducers/connection-modal';
 import {updateMetrics} from '../reducers/workspace-metrics';
 import {isTimeTravel2020} from '../reducers/time-travel';
 import defineQuantumBlocks from '../lib/quantum-defines.js';
+import patchFlyoutMinWidth from '../lib/patch-flyout-min-width';
+
 
 import {
     activateTab,
@@ -107,7 +109,43 @@ class Blocks extends React.Component {
             this.props.options,
             {rtl: this.props.isRtl, toolbox: this.props.toolboxXML, colours: getColorsForMode(this.props.colorMode)}
         );
+
+        // dentro del init / componentDidMount, antes del inject:
+        patchFlyoutMinWidth(this.ScratchBlocks, Math.min(720, Math.floor(window.innerWidth * 0.45)));
+
         this.workspace = this.ScratchBlocks.inject(this.blocks, workspaceConfig);
+        // Force a minimum flyout width so long blocks are fully visible in the palette.
+        const MIN_FLYOUT_WIDTH = 480;
+
+        const flyout = this.workspace.getFlyout();
+        if (flyout) {
+        const applyMinFlyoutWidth = () => {
+            const current = (typeof flyout.getWidth === 'function') ? flyout.getWidth() : flyout.width_;
+            const w = Math.max(current || 0, MIN_FLYOUT_WIDTH);
+
+            // Many Blockly implementations store width_ and use svgBackground_/clipRect_ for clipping.
+            if (flyout.width_ !== undefined) flyout.width_ = w;
+            if (flyout.svgBackground_) flyout.svgBackground_.setAttribute('width', w);
+            if (flyout.clipRect_) flyout.clipRect_.setAttribute('width', w);
+
+            // Recompute layout after changing flyout dimensions.
+            if (this.workspace && typeof this.workspace.resize === 'function') {
+            this.workspace.resize();
+            }
+        };
+
+        // Apply now and after each reflow (category changes, resizing, etc.)
+        if (typeof flyout.reflow === 'function') {
+            const originalReflow = flyout.reflow.bind(flyout);
+            flyout.reflow = (...args) => {
+            originalReflow(...args);
+            applyMinFlyoutWidth();
+            };
+        }
+
+        applyMinFlyoutWidth();
+        }
+
 
         // Register buttons under new callback keys for creating variables,
         // lists, and procedures from extensions.

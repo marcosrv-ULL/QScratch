@@ -36,6 +36,7 @@
     border-bottom-left-radius: $space;
 }
 
+
 .blocks :global(.blocklyMainBackground) {
     stroke: none;
 }

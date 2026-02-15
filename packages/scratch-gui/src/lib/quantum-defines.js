@@ -53,30 +53,25 @@ export default function defineQuantumBlocks(ScratchBlocks) {
     ScratchBlocks.Blocks['quantum_superposition_no_list'] = {
         init: function () {
             this.jsonInit({
-                "message0": "superpose variable: %1 possibilities: %2",
-                "args0": [
-                    {
-                        "type": "field_dropdown",
-                        "name": "VARIABLES",
-                        "options": VARIABLE_OPTIONS
-                    },
-                    {
-                        "type": "input_value",
-                        "name": "N_CLONES"
-                    }
-                ],
-                "category": "Quantum",
-                "colour": QUANTUM_COLOR,
-                "extensions": ["shape_statement"]
+            message0: "superpose %1\npossibilities: %2",
+            args0: [
+                { type: "field_dropdown", name: "VARIABLES", options: VARIABLE_OPTIONS },
+                { type: "input_value", name: "N_CLONES" }
+            ],
+            category: "Quantum",
+            colour: QUANTUM_COLOR,
+            extensions: ["shape_statement"]
             });
         }
     };
+
+
 
     // quantum_superposition_only_list
     ScratchBlocks.Blocks['quantum_superposition_only_list'] = {
         init: function () {
             this.jsonInit({
-                "message0": "superpose variable: %1 list: %2",
+                "message0": "superpose %1 list: %2",
                 "args0": [
                     {
                         "type": "field_dropdown",
@@ -99,7 +94,7 @@ export default function defineQuantumBlocks(ScratchBlocks) {
     ScratchBlocks.Blocks['quantum_superpositions'] = {
         init: function () {
             this.jsonInit({
-                "message0": "superpositions variable: %1 possibilities: %2 list: %3",
+                "message0": "superpose %1 possibilities: %2 list: %3",
                 "args0": [
                     {
                         "type": "field_dropdown",
@@ -126,7 +121,7 @@ export default function defineQuantumBlocks(ScratchBlocks) {
     ScratchBlocks.Blocks['quantum_entanglement_no_list'] = {
         init: function () {
             this.jsonInit({
-                "message0": "entangle variable: %1 target: %2 possibilities: %3",
+                "message0": "entangle %1 target: %2 possibilities: %3",
                 "args0": [
                     {
                         "type": "field_dropdown",
@@ -153,7 +148,7 @@ export default function defineQuantumBlocks(ScratchBlocks) {
     ScratchBlocks.Blocks['quantum_entanglement_only_list'] = {
         init: function () {
             this.jsonInit({
-                "message0": "entangle variable: %1 target: %2 list: %3",
+                "message0": "entangle %1 target: %2 list: %3",
                 "args0": [
                     {
                         "type": "field_dropdown",
@@ -180,7 +175,7 @@ export default function defineQuantumBlocks(ScratchBlocks) {
     ScratchBlocks.Blocks['quantum_entanglement'] = {
         init: function () {
             this.jsonInit({
-                "message0": "entangle variable: %1 target: %2 possibilities: %3 list: %4",
+                "message0": "entangle: %1 target: %2 possibilities: %3 list: %4",
                 "args0": [
                     {
                         "type": "field_dropdown",
