@@ -260,8 +260,6 @@ class QuantumBlocks {
     entanglementNClones(args, util) {
         this.collectPossibiltyTreeGarbage();
         const child = this.runtime.getSpriteTargetByName(args.TARGET);
-        console.log("Child1: ");
-        console.log(child);
         if (!child) return;
         const variable = args.VARIABLES;
         const nClones = args.N_CLONES;
@@ -289,11 +287,7 @@ class QuantumBlocks {
 
         console.log(this.entanglementLinks[util.target.originalId][args.VARIABLES])
         if (!this.entanglementLinks[util.target.originalId][args.VARIABLES].length == 0 || !this.entanglementLinks[child.originalId][args.VARIABLES].length == 0) return;
-        console.log("Child2: ");
-        console.log(child);
         this.addEntangleLink(util.target, child, variable);
-        console.log("Child3: ");
-        console.log(child);
         let originalId1 = util.target.originalId;
         let originalId2 = child.originalId;
         if (!this.isSuperpose(util.target, variable) && !this.isSuperpose(child, variable)) {
@@ -307,8 +301,6 @@ class QuantumBlocks {
         }
 
         let increment = 1;
-        console.log("Child4: ");
-        console.log(child);
         if (!this.runtime.effectGhost) {
             this.runtime.effectGhost = setInterval(() => {
                 for (let i = 0; i < this.runtime.targets.length; i++) {
@@ -322,8 +314,6 @@ class QuantumBlocks {
         }
         let original1 = this.getOriginal(originalId1);
         let original2 = this.getOriginal(originalId2);
-        console.log(original1);
-        console.log(this.possibilityTree);
         let scripts = BlocksRuntimeCache.getScripts(original1.blocks, 'quantum_whenEntanglementStart');
         if (scripts.length >= 1) {
             for (let j = 0; j < scripts.length; j++) {
