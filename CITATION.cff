@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+title: "QScratch"
+message: "If you use QScratch in your research or teaching, please cite the associated publication."
+type: software
+authors:
+  - family-names: Escanez-Exposito
+    given-names: Daniel
+  - family-names: Rodriguez-Vega
+    given-names: Marcos
+  - family-names: Rosa-Remedios
+    given-names: Carlos
+  - family-names: Caballero-Gil
+    given-names: Pino
+repository-code: "https://github.com/marcosrv-ULL/QScratch"
+url: "https://github.com/marcosrv-ULL/QScratch"
+license: "MIT"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Escanez-Exposito
+      given-names: Daniel
+    - family-names: Rodriguez-Vega
+      given-names: Marcos
+    - family-names: Rosa-Remedios
+      given-names: Carlos
+    - family-names: Caballero-Gil
+      given-names: Pino
+  title: "QScratch: introduction to quantum mechanics concepts through block-based programming"
+  journal: "EPJ Quantum Technology"
+  year: 2025
+  doi: "10.1140/epjqt/s40507-025-00314-9"
