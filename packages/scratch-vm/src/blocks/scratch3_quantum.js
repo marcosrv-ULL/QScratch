@@ -122,12 +122,13 @@ class QuantumBlocks {
     superpositionOnlyList(args, util) {
         console.log(args)
         this.collectPossibiltyTreeGarbage();
-        util.target.isOriginal = true;
         if (!this.isInSuperPosition(util.target)) {
+            util.target.isOriginal = true;
             this.possibilityTree[util.target.originalId] = [util.target];
 
         }
         if (!this.isSuperpose(util.target, args.VARIABLES)) {
+            util.target.isOriginal = true;
             this.createPossibilities(util.target, this.convertToList(args.LISTA).length, args.VARIABLES, true, this.convertToList(args.LISTA));
         }
 
@@ -631,12 +632,13 @@ class QuantumBlocks {
 
     superposition(args, util) {
         this.collectPossibiltyTreeGarbage();
-        util.target.isOriginal = true;
         if (!this.isInSuperPosition(util.target)) {
+            util.target.isOriginal = true;
             this.possibilityTree[util.target.originalId] = [util.target];
 
         }
         if (!this.isSuperpose(util.target, args.VARIABLES)) {
+            util.target.isOriginal = true;
             this.createPossibilities(util.target, parseInt(args.N_CLONES, 10), args.VARIABLES);
         }
 
@@ -946,14 +948,15 @@ class QuantumBlocks {
     }
 
     superpositions(args, util) {
-        console.log(args)
+        console.log("SUPERPOSE");
         this.collectPossibiltyTreeGarbage();
-        util.target.isOriginal = true;
         if (!this.isInSuperPosition(util.target)) {
+            //util.target.isOriginal = true;
             this.possibilityTree[util.target.originalId] = [util.target];
 
         }
         if (!this.isSuperpose(util.target, args.VARIABLES)) {
+            //util.target.isOriginal = true;
             this.createPossibilities(util.target, parseInt(args.N_CLONES, 10), args.VARIABLES, true, this.convertToList(args.LISTA));
         }
 
