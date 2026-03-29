@@ -988,8 +988,9 @@ class QuantumBlocks {
 
         for (let i = this.possibilityTree[originalId].length - 1; i >= 0; i--) {
             let target1 = this.possibilityTree[originalId][i];
-            this.runtime.stopForTarget(target1);
+            
             if (!target1.isOriginal) {
+                this.runtime.stopForTarget(target1);
                 target1.isVisible = false;
                 this.runtime.disposeTarget(target1);
                 this.onTreePopThis(target1);
