@@ -1,4 +1,23 @@
 // Polyfills
+
+// Intercept native Web Worker to fix hardcoded absolute paths in external dependencies
+const OriginalWorker = window.Worker;
+
+window.Worker = function(stringUrl, options) {
+    if (typeof stringUrl === 'string') {
+        // Redirect storage fetch worker
+        if (stringUrl.startsWith('/chunks/fetch-worker')) {
+            stringUrl = '/QScratch' + stringUrl;
+        } 
+        // Redirect VM extension worker
+        else if (stringUrl === '/extension-worker.js') {
+            stringUrl = '/QScratch/extension-worker.js';
+        }
+    }
+    
+    return new OriginalWorker(stringUrl, options);
+};
+
 import 'es6-object-assign/auto';
 import 'core-js/fn/array/includes';
 import 'core-js/fn/promise/finally';
