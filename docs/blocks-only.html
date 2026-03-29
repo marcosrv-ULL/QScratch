@@ -1,0 +1,46 @@
+<!doctype html><html><head><script>const REPO_NAME = '/QScratch';
+
+        // 1. Intercept Web Workers
+        const OriginalWorker = window.Worker;
+        window.Worker = function(url, options) {
+            let parsedUrl = url instanceof URL ? url.href : url;
+            if (typeof parsedUrl === 'string' && parsedUrl.startsWith('/chunks/')) {
+                parsedUrl = REPO_NAME + parsedUrl;
+            }
+            return new OriginalWorker(parsedUrl, options);
+        };
+
+        // 2. Intercept Fetch API
+        const originalFetch = window.fetch;
+        window.fetch = function() {
+            if (typeof arguments[0] === 'string' && arguments[0].startsWith('/chunks/')) {
+                arguments[0] = REPO_NAME + arguments[0];
+            }
+            return originalFetch.apply(this, arguments);
+        };
+
+        // 3. Intercept XMLHttpRequest
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url) {
+            let parsedUrl = url instanceof URL ? url.href : url;
+            if (typeof parsedUrl === 'string' && parsedUrl.startsWith('/chunks/')) {
+                parsedUrl = REPO_NAME + parsedUrl;
+            }
+            return originalOpen.apply(this, [method, parsedUrl, ...Array.prototype.slice.call(arguments, 2)]);
+        };
+
+        // 4. Intercept DOM element attribute manipulation (Webpack script injection)
+        const originalSetAttribute = Element.prototype.setAttribute;
+        Element.prototype.setAttribute = function(name, value) {
+            if (name === 'src' && typeof value === 'string' && value.startsWith('/chunks/')) {
+                value = REPO_NAME + value;
+            }
+            return originalSetAttribute.call(this, name, value);
+        };</script><script>const originalGetContext = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function(contextType, contextAttributes) {
+            if (contextType === '2d') {
+                // Forzamos la optimización requerida por los navegadores modernos
+                contextAttributes = Object.assign({}, contextAttributes, { willReadFrequently: true });
+            }
+            return originalGetContext.call(this, contextType, contextAttributes);
+        };</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="google" value="notranslate"><link rel="shortcut icon" href="static/favicon.ico"><title>QScratch: Blocks Only Example</title><script defer="defer" src="blocksonly.js"></script></head><body></body></html>
