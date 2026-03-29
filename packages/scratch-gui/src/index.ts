@@ -14,7 +14,7 @@ export * from './exported-reducers';
 // Intercept native Web Worker to fix hardcoded absolute paths in external dependencies
 const OriginalWorker = window.Worker;
 
-window.Worker = function(stringUrl, options) {
+(window as any).Worker = function(stringUrl, options) {
     if (typeof stringUrl === 'string') {
         // Redirect storage fetch worker
         if (stringUrl.startsWith('/chunks/fetch-worker')) {
