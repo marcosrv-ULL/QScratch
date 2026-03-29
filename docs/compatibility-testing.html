@@ -1,4 +1,9 @@
-<!doctype html><html><head><script>const REPO_NAME = '/QScratch';
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <script>
+        const REPO_NAME = '/QScratch';
 
         // 1. Intercept Web Workers
         const OriginalWorker = window.Worker;
@@ -36,11 +41,26 @@
                 value = REPO_NAME + value;
             }
             return originalSetAttribute.call(this, name, value);
-        };</script><script>const originalGetContext = HTMLCanvasElement.prototype.getContext;
+        };
+    </script>
+    <script>
+        const originalGetContext = HTMLCanvasElement.prototype.getContext;
         HTMLCanvasElement.prototype.getContext = function(contextType, contextAttributes) {
             if (contextType === '2d') {
                 // Forzamos la optimización requerida por los navegadores modernos
                 contextAttributes = Object.assign({}, contextAttributes, { willReadFrequently: true });
             }
             return originalGetContext.call(this, contextType, contextAttributes);
-        };</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="google" value="notranslate"><link rel="shortcut icon" href="static/favicon.ico"><title>QScratch: Compatibility Testing</title><script defer="defer" src="compatibilitytesting.js"></script></head><body></body></html>
+        };
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" value="notranslate">
+    <link rel="shortcut icon" href="static/favicon.ico">
+
+    <title>QScratch: Compatibility Testing</title>
+  <script defer src="compatibilitytesting.js"></script></head>
+  <body>
+    
+  </body>
+</html>
