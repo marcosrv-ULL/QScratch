@@ -171,14 +171,14 @@ const buildConfig = baseConfig.clone()
         ...commonHtmlWebpackPluginOptions,
         chunks: ['gui'],
         template: 'src/playground/index.ejs',
-        title: 'QScratch'
+        title: 'QScratch11'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['guistandalone'],
         filename: 'standalone.html',
         template: 'src/playground/index.ejs',
-        title: 'QScratch: Standalone Mode'
+        title: 'QScratch11: Standalone Mode'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
