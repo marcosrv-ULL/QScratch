@@ -75,12 +75,6 @@ const baseConfig = new ScratchWebpackConfigBuilder(
                 to: 'static/blocks-media/high-contrast'
             },
             {
-                // Copy translation files to the build output
-                from: '../../node_modules/scratch-l10n/locales',
-                to: 'static/locales',
-                noErrorOnMissing: true
-            },
-            {
                 // overwrite some of the default block media with high-contrast versions
                 // this entry must come after copying scratch-blocks/media into the high-contrast directory
                 from: 'src/lib/settings/color-mode/high-contrast/blocks-media',
@@ -124,7 +118,7 @@ const distConfig = baseConfig.clone()
             // - if the publicPath is static here (defaults to `/`), they are unable to load their assets,
             // which depend on a relative path resolution.
             // (e.g. `/tmp/*path-to-packaged-dist*/static/assets` in scratch-desktop)
-            publicPath: '/QScratch/',
+            publicPath: 'auto',
             path: path.resolve(__dirname, 'dist')
         }
     })
@@ -170,42 +164,42 @@ const buildConfig = baseConfig.clone()
             // Having `publicPath: '/'` (the default) means the `gui.js` file in `build/index.html`
             // would be looked for at the root of the filesystem, which is incorrect.
             // Hence, we're resetting the public path to be relative.
-            publicPath: '/QScratch/'
+            publicPath: ''
         }
     })
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['gui'],
         template: 'src/playground/index.ejs',
-        title: 'QScratch - Scratch 3.0 mod'
+        title: 'Scratch 3.0 GUI'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['guistandalone'],
         filename: 'standalone.html',
         template: 'src/playground/index.ejs',
-        title: 'QScratch - Scratch 3.0 mod: Standalone Mode'
+        title: 'Scratch 3.0 GUI: Standalone Mode'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['blocksonly'],
         filename: 'blocks-only.html',
         template: 'src/playground/index.ejs',
-        title: 'QScratch - Scratch 3.0 mod: Blocks Only Example'
+        title: 'Scratch 3.0 GUI: Blocks Only Example'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['compatibilitytesting'],
         filename: 'compatibility-testing.html',
         template: 'src/playground/index.ejs',
-        title: 'QScratch - Scratch 3.0 mod: Compatibility Testing'
+        title: 'Scratch 3.0 GUI: Compatibility Testing'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['player'],
         filename: 'player.html',
         template: 'src/playground/index.ejs',
-        title: 'QScratch - Scratch 3.0 mod: Player Example'
+        title: 'Scratch 3.0 GUI: Player Example'
     }))
     .addPlugin(new CopyWebpackPlugin({
         patterns: [
@@ -217,13 +211,6 @@ const buildConfig = baseConfig.clone()
                 from: 'extensions/**',
                 to: 'static',
                 context: 'src/examples'
-            },
-            {
-                // Copy library definitions (backdrops, costumes, sounds) 
-                // required for the editor to load assets correctly
-                from: 'src/lib/libraries/*.json',
-                to: 'libraries',
-                flatten: true
             }
         ]
     }));
