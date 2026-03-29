@@ -52,10 +52,21 @@
             return originalSetAttribute.call(this, name, value);
         };
     </script>
+    <script>
+        const originalGetContext = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function(contextType, contextAttributes) {
+            if (contextType === '2d') {
+                // Forzamos la optimización requerida por los navegadores modernos
+                contextAttributes = Object.assign({}, contextAttributes, { willReadFrequently: true });
+            }
+            return originalGetContext.call(this, contextType, contextAttributes);
+        };
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google" value="notranslate">
     <link rel="shortcut icon" href="static/favicon.ico">
+
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
