@@ -12,14 +12,20 @@
     <!-- End Google Tag Manager -->
     <% } %>
 
-    <script>
+   <script>
         var OriginalWorker = window.Worker;
         window.Worker = function(stringUrl, options) {
-            if (typeof stringUrl === 'string') {
-                if (stringUrl.indexOf('/chunks/fetch-worker') === 0) {
-                    stringUrl = '/QScratch' + stringUrl;
-                } else if (stringUrl === '/extension-worker.js') {
-                    stringUrl = '/QScratch/extension-worker.js';
+            if (stringUrl) {
+                // Convert to string in case Webpack passes a URL object
+                var urlStr = stringUrl.toString();
+                
+                // Intercept fetch-worker if it lacks the subdirectory
+                if (urlStr.includes('/chunks/fetch-worker') && !urlStr.includes('/QScratch/')) {
+                    stringUrl = urlStr.replace('/chunks/fetch-worker', '/QScratch/chunks/fetch-worker');
+                } 
+                // Intercept extension-worker if it lacks the subdirectory
+                else if (urlStr.includes('/extension-worker.js') && !urlStr.includes('/QScratch/')) {
+                    stringUrl = urlStr.replace('/extension-worker.js', '/QScratch/extension-worker.js');
                 }
             }
             return new OriginalWorker(stringUrl, options);
