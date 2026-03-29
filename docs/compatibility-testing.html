@@ -2,6 +2,20 @@
 <html>
   <head>
     
+
+    <script>
+        var OriginalWorker = window.Worker;
+        window.Worker = function(stringUrl, options) {
+            if (typeof stringUrl === 'string') {
+                if (stringUrl.indexOf('/chunks/fetch-worker') === 0) {
+                    stringUrl = '/QScratch' + stringUrl;
+                } else if (stringUrl === '/extension-worker.js') {
+                    stringUrl = '/QScratch/extension-worker.js';
+                }
+            }
+            return new OriginalWorker(stringUrl, options);
+        };
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google" value="notranslate">
