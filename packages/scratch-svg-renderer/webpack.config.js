@@ -53,7 +53,7 @@ const playgroundConfig = new ScratchWebpackConfigBuilder(common)
                 name: 'ScratchSVGRenderer',
                 type: 'umd'
             },
-            publicPath: '/'
+            publicPath: '/QScratch/'
         }
     })
     .addPlugin(
