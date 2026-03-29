@@ -75,6 +75,12 @@ const baseConfig = new ScratchWebpackConfigBuilder(
                 to: 'static/blocks-media/high-contrast'
             },
             {
+                // Copy translation files to the build output
+                from: '../../node_modules/scratch-l10n/locales',
+                to: 'static/locales',
+                noErrorOnMissing: true
+            },
+            {
                 // overwrite some of the default block media with high-contrast versions
                 // this entry must come after copying scratch-blocks/media into the high-contrast directory
                 from: 'src/lib/settings/color-mode/high-contrast/blocks-media',
@@ -171,35 +177,35 @@ const buildConfig = baseConfig.clone()
         ...commonHtmlWebpackPluginOptions,
         chunks: ['gui'],
         template: 'src/playground/index.ejs',
-        title: 'Scratch 3.0 GUI'
+        title: 'QScratch - Scratch 3.0 mod'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['guistandalone'],
         filename: 'standalone.html',
         template: 'src/playground/index.ejs',
-        title: 'Scratch 3.0 GUI: Standalone Mode'
+        title: 'QScratch - Scratch 3.0 mod: Standalone Mode'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['blocksonly'],
         filename: 'blocks-only.html',
         template: 'src/playground/index.ejs',
-        title: 'Scratch 3.0 GUI: Blocks Only Example'
+        title: 'QScratch - Scratch 3.0 mod: Blocks Only Example'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['compatibilitytesting'],
         filename: 'compatibility-testing.html',
         template: 'src/playground/index.ejs',
-        title: 'Scratch 3.0 GUI: Compatibility Testing'
+        title: 'QScratch - Scratch 3.0 mod: Compatibility Testing'
     }))
     .addPlugin(new HtmlWebpackPlugin({
         ...commonHtmlWebpackPluginOptions,
         chunks: ['player'],
         filename: 'player.html',
         template: 'src/playground/index.ejs',
-        title: 'Scratch 3.0 GUI: Player Example'
+        title: 'QScratch - Scratch 3.0 mod: Player Example'
     }))
     .addPlugin(new CopyWebpackPlugin({
         patterns: [
@@ -211,6 +217,13 @@ const buildConfig = baseConfig.clone()
                 from: 'extensions/**',
                 to: 'static',
                 context: 'src/examples'
+            },
+            {
+                // Copy library definitions (backdrops, costumes, sounds) 
+                // required for the editor to load assets correctly
+                from: 'src/lib/libraries/*.json',
+                to: 'libraries',
+                flatten: true
             }
         ]
     }));
