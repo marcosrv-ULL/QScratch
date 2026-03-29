@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <% if (htmlWebpackPlugin.options.gtm_id) { %>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl+'<%= htmlWebpackPlugin.options.gtm_env_auth %>';
-        f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','<%- htmlWebpackPlugin.options.gtm_id %>');
-    </script>
-    <!-- End Google Tag Manager -->
-    <% } %>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google" value="notranslate">
-    <link rel="shortcut icon" href="static/favicon.ico">
-    <base href="/QScratch/" />
+    
+    <script>
+        // 1. Interceptar la creación del Web Worker (Soluciona el error del fetch-worker)
+        const OriginalWorker = window.Worker;
+        window.Worker = function(url, options) {
+            if (typeof url === 'string' && url.startsWith('/chunks/')) {
+                url = '/QScratch' + url;
+            }
+            return new OriginalWorker(url, options);
+        };
+
+        // 2. Interceptar la inyección de Scripts (Por si intenta cargar vendors-chunks.js)
+        const originalSrcDescriptor = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+        Object.defineProperty(HTMLScriptElement.prototype, 'src', {
+            set: function(val) {
+                if (typeof val === 'string' && val.startsWith('/chunks/')) {
+                    val = '/QScratch' + val;
+                }
+                return originalSrcDescriptor.set.call(this, val);
+            },
+            get: function() {
+                return originalSrcDescriptor.get.call(this);
+            }
+        });
+    </script>
+    
     <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
+    </head>
   <body>
     <% if (htmlWebpackPlugin.options.gtm_id) { %>
       <!-- Google Tag Manager (noscript) -->
