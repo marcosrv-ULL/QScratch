@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script>// 1. Interceptar la creación del Web Worker (Soluciona el error del fetch-worker)
+        const OriginalWorker = window.Worker;
+        window.Worker = function(url, options) {
+            if (typeof url === 'string' && url.startsWith('/chunks/')) {
+                url = '/QScratch' + url;
+            }
+            return new OriginalWorker(url, options);
+        };
+
+        // 2. Interceptar la inyección de Scripts (Por si intenta cargar vendors-chunks.js)
+        const originalSrcDescriptor = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+        Object.defineProperty(HTMLScriptElement.prototype, 'src', {
+            set: function(val) {
+                if (typeof val === 'string' && val.startsWith('/chunks/')) {
+                    val = '/QScratch' + val;
+                }
+                return originalSrcDescriptor.set.call(this, val);
+            },
+            get: function() {
+                return originalSrcDescriptor.get.call(this);
+            }
+        });</script><title>QScratch - Scratch 3.0 mod: Blocks Only Example</title><script defer="defer" src="/QScratch/blocksonly.js"></script></head><body></body></html>
