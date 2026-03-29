@@ -35,6 +35,34 @@ const baseConfig = new ScratchWebpackConfigBuilder(
         cssModuleExceptions
     })
     .setTarget('browserslist')
+    // =======================================================================
+    // FIX FOR GITHUB PAGES SUBDIRECTORY DEPLOYMENT (scratch-storage)
+    // Intercepts the hardcoded absolute path to the fetch-worker chunk
+    // and prepends the GitHub repository name.
+    // =======================================================================
+    .addModuleRule({
+        test: /scratch-storage[\\/]dist[\\/]web[\\/]scratch-storage\.js$/,
+        loader: 'string-replace-loader',
+        options: {
+            search: 'chunks/fetch-worker',
+            replace: 'QScratch/chunks/fetch-worker',
+            flags: 'g'
+        }
+    })
+    // =======================================================================
+    // FIX FOR GITHUB PAGES SUBDIRECTORY DEPLOYMENT (scratch-vm)
+    // Intercepts the hardcoded absolute path to the extension-worker
+    // and prepends the GitHub repository name.
+    // =======================================================================
+    .addModuleRule({
+        test: /scratch-vm[\\/]dist[\\/]web[\\/]scratch-vm\.js$/,
+        loader: 'string-replace-loader',
+        options: {
+            search: 'extension-worker.js',
+            replace: 'QScratch/extension-worker.js',
+            flags: 'g'
+        }
+    })
     .merge({
         output: {
             assetModuleFilename: 'static/assets/[name].[hash][ext][query]',

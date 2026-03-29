@@ -172,6 +172,7 @@
     "selenium-webdriver": "3.6.0",
     "semantic-release": "19.0.5",
     "stream-browserify": "3.0.0",
+    "string-replace-loader": "^3.3.0",
     "ts-jest": "29.4.6",
     "ts-loader": "9.5.4",
     "url-loader": "4.1.1",
